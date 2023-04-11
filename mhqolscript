@@ -1,0 +1,760 @@
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+local Window = OrionLib:MakeWindow({Name = "Jasithis Miner's Haven QOL", HidePremium = false, IntroText = "Loading", SaveConfig = true, ConfigFolder = "MHQOL"})
+
+-- Variables
+
+-- Toggles
+
+local AutoReborn = true
+local ConvSpeed = true
+local ShinyTracker = true
+local OreTweaks = true
+local FreezeOres = true
+local RotOres = true
+local CrateTP = true
+local EggTP = true
+local OpenBoxes = true
+local OreToFurnace = true
+
+-- Player
+
+local playersBase = game:GetService("Players").LocalPlayer.PlayerTycoon.Value
+local droppedParts = game:GetService("Workspace").DroppedParts
+local playerOres = droppedParts[tostring(playersBase)]:GetChildren()
+
+local BaseOres = game:GetService("Workspace").DroppedParts[tostring(playersBase)]
+local playersBasePos = game:GetService("Workspace").Tycoons[tostring(playersBase)].Base
+
+print(playersBase)
+
+local player = game:GetService("Players").LocalPlayer
+local playerPos = player.Character.HumanoidRootPart.CFrame
+local char = player.Character
+
+local playersBase = game:GetService("Players").LocalPlayer.PlayerTycoon.Value
+
+local playergui = player.PlayerGui.GUI
+local notiGui = playergui.Notifications
+
+-- Im Go Variables
+
+local TycoonBase = game.Players.LocalPlayer.PlayerTycoon.Value.Base
+local MyTycoon = game:GetService("Players").LocalPlayer.PlayerTycoon.Value
+local MoneyLibary = require(game:GetService("ReplicatedStorage").MoneyLib)
+
+local EggNames = {"Coconut Egg", "Energy Egg", "Armored Egg", "Dustdevil Egg", "Eggconomy", "Sentry Egg", "Soapy Egg", "Disco Egg", "Sandshark Egg", "Sporegg", "Spooky Egg", "Radio Egg", "Octo Egg", "Bomb Egg", "Chicken Legg", "Baby Borker", "Eggield", "Eggicopter", "Eggscream", "Lucky Egg", "Time Egg", "Speggtral Rose", "Vaporwave Egg", "Cactus Egg", "Obsidian Egg", "Amber Egg", "Leggacy", "Tank Egg", "Gator Egg", "Pearl Egg", "Balloon Egg", "Leggendary", "Moai Egg", "Watermelon Egg", "CYBEGG9000", "Malicious Egg", "Antigravity Egg", "iEgg", "Deviled Egg"}
+
+-- Layouts
+
+local firstLayoutToLoad = "Layout1"
+local secondLayoutToLoad = "Layout2"
+local rebirthAmount = game:GetService("Players").LocalPlayer.Rebirths
+
+local waitsplittime = .75
+
+-- Base Tweaks
+
+local conveyorSpeed = 1
+
+-- Webhooks
+
+local itemGot = "Basic Iron Mine"
+local shinyGot = "Ghost Ore Memer"
+
+-- Tps
+
+local crateTpDelay = 1
+local eggTpDelay = 3
+
+local haven = game:GetService("Workspace").Map["EGG_SPAWNS"]
+local easterisland = game:GetService("Workspace").Easter["EASTER ISLAND EGG SPAWNS"]
+
+-- Misc Variables
+
+local boxToOpen = "BOMBBBB"
+
+local rpFurnaceString = "Basic Furnace"
+
+--Functions
+
+-- Webhooks
+
+function shinyTracker()
+    if ShinyTracker == true then
+        print("shiny tracker enabled")
+        while wait(1) do -- checks for items gained
+            notiGui.ChildAdded:Connect(function(child)
+                print("Item Gained:", child.Title.Text)
+                itemGot = child.Title.Text
+                if string.find(itemGot, "⭐") then
+                    shinyGot = itemGot
+                end
+                if string.find(shinyGot, "⭐") then
+                    executeShinyWebHook()
+                    wait(.1)
+                    shinyGot = "BOMBBBB"
+                end
+             end)
+        end
+    end
+end
+
+function executeShinyWebHook()
+    msg = {
+        ["embeds"] = {{
+        ["color"] = 13708129,
+        ["description"] = shinyGot,
+        ["author"] = {
+        ["name"] = player.DisplayName.." obtained a shiny!"
+        }}
+        }
+        }
+        
+        local response = syn.request(
+        {
+        Url = "https://discord.com/api/webhooks/1095076075295490049/tqNGGx-MaxMFHF2C_-saMifH2UvQfwxZdNZQ34Li3kUCfFJCImZhFiJhxRlcDXslast2",
+        Method = "POST",
+        Headers = {
+        ["Content-Type"] = "application/json"
+        },
+        Body = game:GetService("HttpService"):JSONEncode(msg)
+        }
+        )
+
+        print(shinyGot)
+        print(itemGot)
+end
+
+-- Misc
+
+function openBoxes()
+    while OpenBoxes == true do
+            game:GetService("ReplicatedStorage").MysteryBox:InvokeServer(boxToOpen)
+        wait(.5)
+    end
+end
+
+function oresToFurnace()
+	while OreToFurnace do
+		local rpFurnace = playersBase[tostring(rpFurnaceString)] and playersBase[tostring(rpFurnaceString)].Model.Lava
+		if rpFurnace then
+			for i, v in pairs(BaseOres:GetChildren()) do
+				v.CFrame = rpFurnace.CFrame
+			end
+		end
+		wait()
+	end
+end
+
+-- Ores
+
+function freezeOres()
+    if FreezeOres == false then
+        for i, v in pairs(BaseOres:GetChildren()) do
+            v.Anchored = false
+        end
+    end
+
+    while FreezeOres == true do
+        for i, v in pairs(BaseOres:GetChildren()) do
+            v.Anchored = FreezeOres
+        end
+        wait(0.00000001)
+    end
+end
+
+function rotOres()
+	while RotOres do
+		for i, v in pairs(BaseOres:GetChildren()) do
+			v.Orientation = Vector3.new(0, 0, 0)
+		end
+		wait()
+	end
+end
+
+function tpOres()
+    local playerPos = player.Character.HumanoidRootPart.CFrame
+    for i, v in pairs(BaseOres:GetChildren()) do
+        v.CFrame = playerPos
+    end
+end
+
+function destroyOres()
+    for i, v in pairs(BaseOres:GetChildren()) do
+        v.CFrame = playersBasePos.CFrame
+    end
+end
+    
+-- Auto Reborn
+
+function autoReborn()
+    while AutoReborn == true do
+        if game:GetService("Players").LocalPlayer.PlayerGui.GUI.Money.Value >= MoneyLibary.RebornPrice(game:GetService("Players").LocalPlayer) and (game:GetService("Players").LocalPlayer.PlayerTycoon.Value:GetPivot().p - game.Players.LocalPlayer.Character:GetPivot().p).Magnitude <= 150 then
+            game:GetService("ReplicatedStorage").Rebirth:InvokeServer(26)
+        end
+        wait(.0000001)
+    end
+end
+
+function autoLayout()
+	if AutoLayout == true then
+		game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",firstLayoutToLoad)
+		wait(waitsplittime)
+		game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",secondLayoutToLoad)
+	end
+end
+
+game:GetService("Players").LocalPlayer.Rebirths:GetPropertyChangedSignal("Value"):Connect(function()
+	wait(0.5)
+	pcall(autoLayout)
+end)
+
+-- Base Tweaks
+
+function convSpeed()
+    while ConvSpeed == true do
+        local adjustSpeedValue = playersBase:FindFirstChild("AdjustSpeed")
+        adjustSpeedValue.Value = conveyorSpeed
+        wait(0.000001)
+    end    
+end
+
+-- Crate & Egg TP Functions
+
+function crateTP()
+    if CrateTP == true then
+        while true do
+            local boxes = game.workspace.Boxes:GetChildren()
+            if #boxes == 0 then
+                game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(playersBasePos.Position))
+                break
+            else
+                for _, box in ipairs(boxes) do
+                    wait(crateTpDelay)
+                    game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(box.CFrame)
+                end
+            end
+        end
+    end
+end
+
+game.workspace.Boxes.ChildAdded:Connect(function(child)
+    if CrateTP == true then
+        game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(child.CFrame)
+        wait(crateTpDelay)
+        game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(playersBasePos.Position))
+    end
+end)
+
+game.workspace.Boxes.ChildRemoved:Connect(function(child)
+    if CrateTP == true then
+        game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(playersBasePos.Position))
+    end
+end)
+
+local function eggTP()
+    if EggTP == true then
+        local eggsFound = true
+        while eggsFound do
+            eggsFound = false
+            for _, location in ipairs({haven, easterisland}) do
+                for _, v in pairs(location:GetChildren()) do
+                    if #v:GetChildren() > 0 then
+                        eggsFound = true
+                        char:MoveTo(v.Position)
+                        for _, a in pairs(v:GetDescendants()) do
+                            if a:IsA("ProximityPrompt") then
+                                fireproximityprompt(a)
+                            end
+                        end
+                        wait(eggTpDelay)
+                    end
+                end
+            end
+            if not eggsFound then
+                char:MoveTo(playersBase.Base.Position)
+            end
+        end
+    end
+    if EggTp == false then
+        eggsFound = false
+    end
+end
+
+local function recursiveChildAddedCheck(parent)
+    for _, child in ipairs(parent:GetChildren()) do
+        if child:IsA("MeshPart") or child:IsA("Part") then
+            EggTP()
+        end
+    end
+    parent.ChildAdded:Connect(function(child)
+        if child:IsA("MeshPart") or child:IsA("Part") then
+            EggTP()
+            print("New egg found!")
+        end
+    end)
+end
+
+haven.DescendantAdded:Connect(function(descendant)
+    if descendant:IsA("MeshPart") or descendant:IsA("Part") then
+        if descendant.Name:find("Egg") then
+            print("New egg added to haven:", descendant:GetFullName())
+            eggTP()
+        end
+    else
+        recursiveChildAddedCheck(descendant)
+    end
+end)
+
+easterisland.DescendantAdded:Connect(function(descendant)
+    if descendant:IsA("MeshPart") or descendant:IsA("Part") then
+        if descendant.Name:find("Egg") then
+            print("New egg added to easterisland:", descendant:GetFullName())
+            eggTP()
+        end
+    else
+        recursiveChildAddedCheck(descendant)
+    end
+end)
+
+-- Crate & Egg TP Function ^
+
+--Tabs
+
+local AutoRebornTab = Window:MakeTab({
+	Name = "Auto Rebirth",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+local BaseTweaksTab = Window:MakeTab({
+	Name = "Base Tweaks",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+local WebhooksTab = Window:MakeTab({
+	Name = "Webhooks",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+local TeleportsTab = Window:MakeTab({
+	Name = "Teleports",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+local LayoutsTab = Window:MakeTab({
+	Name = "Layouts",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+local VendorsTab = Window:MakeTab({
+	Name = "Vendors",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+local MiscTab = Window:MakeTab({
+	Name = "Miscellaneous",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+--AutoReborn
+
+local AutoRebornSection = AutoRebornTab:AddSection({
+	Name = "Auto Rebirth"
+})
+
+AutoRebornSection:AddToggle({
+	Name = "Toggle Auto Rebirth",
+	Default = false,
+	Callback = function(Value)
+		AutoReborn = Value
+        autoReborn()
+    end
+})
+
+local AutoLayoutSection = AutoRebornTab:AddSection({
+	Name = "Auto Load"
+})
+
+AutoLayoutSection:AddToggle({
+	Name = "Toggle Auto Load Layouts",
+	Default = false,
+	Callback = function(Value)
+		AutoLayout = Value
+        autoLayout()
+	end    
+})
+
+AutoLayoutSection:AddDropdown({
+	Name = "Select First Layout To Load",
+	Default = "Layout1",
+	Options = {"Layout1", "Layout2", "Layout3"},
+	Callback = function(Value)
+			firstLayoutToLoad = Value
+	end    
+})
+
+AutoLayoutSection:AddDropdown({
+	Name = "Select Second Layout To Load",
+	Default = "Layout2",
+	Options = {"Layout1", "Layout2", "Layout3"},
+	Callback = function(Value)
+			secondLayoutToLoad = Value
+	end    
+})
+
+AutoLayoutSection:AddSlider({
+	Name = "Split Wait Time",
+	Min = 0,
+	Max = 30,
+	Default = .75,
+	Color = Color3.fromRGB(255,255,255),
+	Increment = .25,
+	ValueName = "Split Time",
+	Callback = function(Value)
+		waitsplittime = Value
+	end    
+})
+
+-- Base Tweaks
+
+local ConveyorSection = BaseTweaksTab:AddSection({
+	Name = "Conveyors"
+})
+
+local OreSection = BaseTweaksTab:AddSection({
+	Name = "Ore Tweaks"
+})
+
+ConveyorSection:AddToggle({
+	Name = "Toggle Conveyor Speed",
+	Default = false,
+	Callback = function(Value)
+		ConvSpeed = Value
+		print(conveyorSpeed)
+		convSpeed()
+	end    
+})
+
+ConveyorSection:AddSlider({
+	Name = "Conveyor Speed Multiplier",
+	Min = 1,
+	Max = 10,
+	Default = 1,
+	Color = Color3.fromRGB(255,255,255),
+	Increment = 1,
+	ValueName = "Speed Multiplier",
+	Callback = function(Value)
+		conveyorSpeed = Value
+	end    
+})
+
+OreSection:AddToggle({
+	Name = "Lock Ore Rotation",
+	Default = false,
+	Callback = function(Value)
+            RotOres = Value
+            rotOres()
+	end    
+})
+
+OreSection:AddToggle({
+	Name = "Freeze Ores",
+	Default = false,
+	Callback = function(Value)
+            FreezeOres = Value
+            freezeOres()
+	end    
+})
+
+OreSection:AddButton({
+	Name = "TP Ores To Player",
+	Callback = function()
+            tpOres()
+  	end    
+})
+
+OreSection:AddButton({
+	Name = "Destroy All Ores",
+	Callback = function()
+            destroyOres()
+  	end    
+})
+
+-- Webhook
+
+local WebhooksSection = WebhooksTab:AddSection({
+	Name = "Shiny Tracker"
+})
+
+WebhooksSection:AddToggle({
+	Name = "Toggle Shiny Tracker",
+	Default = false,
+	Callback = function(Value)
+		ShinyTracker = Value
+		shinyTracker()
+	end    
+})
+
+WebhooksSection:AddButton({
+	Name = "Test Webhook",
+	Callback = function()
+		executeShinyWebHook()
+  	end    
+})
+
+-- Teleports
+
+local TeleportsSection = TeleportsTab:AddSection({
+	Name = "Teleports"
+})
+
+local CrateTpSection = TeleportsTab:AddSection({
+	Name = "Crate TP"
+})
+
+local EggTpSection = TeleportsTab:AddSection({
+	Name = "Egg TP"
+})
+
+TeleportsSection:AddButton({
+	Name = "Your Base",
+	Callback = function()
+		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(playersBasePos.Position)
+  	end    
+})
+
+TeleportsSection:AddButton({
+	Name = "Fargield",
+	Callback = function()
+		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-325.110077, 104.414345, 525.674622, -0.952662528, 5.33232161e-08, 0.304029793, 4.14620338e-08, 1, -4.54688696e-08, -0.304029793, -3.07107939e-08, -0.952662528)
+  	end    
+})
+
+TeleportsSection:AddButton({
+	Name = "Craftsman",
+	Callback = function()
+		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-131.36438, 223.112289, 221.24263, -0.707134247, 0, 0.707079291, 0, 1, 0, -0.707079291, 0, -0.707134247)
+  	end    
+})
+
+TeleportsSection:AddButton({
+	Name = "Spook Mc Dook",
+	Callback = function()
+		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-363.579102, 50.71241, 1329.94287, -0.963770151, 0.263482153, -0.0415322073, 0.263250232, 0.964664221, 0.0110557415, 0.0429776274, -0.000278171618, -0.999076366)
+  	end    
+})
+
+TeleportsSection:AddButton({
+	Name = "Masked Man",
+	Callback = function()
+		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(game.workspace.Market.Handle.Position)
+  	end    
+})
+
+CrateTpSection:AddToggle({
+	Name = "Toggle Crate TP",
+	Default = false,
+	Callback = function(Value)
+		CrateTP = Value
+		crateTP()
+	end    
+})
+
+CrateTpSection:AddSlider({
+	Name = "Crate TP Delay",
+	Min = 1,
+	Max = 10,
+	Default = 1,
+	Color = Color3.fromRGB(255,255,255),
+	Increment = 1,
+	ValueName = "Sec Delay",
+	Callback = function(Value)
+		crateTpDelay = Value
+	end    
+})
+
+EggTpSection:AddToggle({
+	Name = "Toggle Egg TP",
+	Default = false,
+	Callback = function(Value)
+		EggTP = Value
+		eggTP()
+	end    
+})
+
+EggTpSection:AddButton({
+	Name = "Remove Water",
+	Callback = function()
+		game:GetService('Workspace').Terrain:Clear()
+  	end    
+})
+
+EggTpSection:AddSlider({
+	Name = "Egg TP Delay",
+	Min = 3,
+	Max = 15,
+	Default = 3,
+	Color = Color3.fromRGB(255,255,255),
+	Increment = 1,
+	ValueName = "Sec Delay",
+	Callback = function(Value)
+		eggTpDelay = Value
+	end    
+})
+
+EggTpSection:AddButton({
+	Name = "Claim Eggs",
+	Callback = function()
+		local remoteEvent = game:GetService("ReplicatedStorage").EventControllers.Easter.EasterBadgeItem
+		for _, eggName in ipairs(EggNames) do
+			remoteEvent:InvokeServer(eggName)
+		end
+	end
+})
+
+-- Layouts
+
+local LayoutStealerSection = LayoutsTab:AddSection({
+	Name = "Layout Stealer"
+})
+
+-- Vendors
+
+local VendorsSection = VendorsTab:AddSection({
+	Name = "Vendors"
+})
+
+VendorsSection:AddToggle({
+	Name = "Toggle Craftsman",
+	Default = false,
+	Callback = function(Value)
+          playergui.Craftsman.Visible = Value
+	end    
+})
+
+VendorsSection:AddToggle({
+	Name = "Toggle Draedon",
+	Default = false,
+	Callback = function(Value)
+          playergui.Craftsman.Visible = Value
+	end    
+})
+
+VendorsSection:AddToggle({
+	Name = "Toggle SpookMcDook",
+	Default = false,
+	Callback = function(Value)
+          playergui.SpookMcDookShop.Visible = Value
+	end    
+})
+
+VendorsSection:AddToggle({
+	Name = "Toggle Masked Man",
+	Default = false,
+	Callback = function(Value)
+          playergui.EventShop.Visible = Value
+	end    
+})
+
+-- Misc
+
+local BoxSection = MiscTab:AddSection({
+	Name = "Boxes"
+})
+
+local RpSection = MiscTab:AddSection({
+	Name = "Research Points"
+})
+
+local MovementSection = MiscTab:AddSection({
+	Name = "Movement"
+})
+
+local TransitionSection = MiscTab:AddSection({
+	Name = "Transition Screen"
+})
+
+BoxSection:AddToggle({
+	Name = "Toggle Open Boxes",
+	Default = false,
+	Callback = function(Value)
+		OpenBoxes = Value
+		openBoxes()
+	end    
+})
+
+BoxSection:AddDropdown({
+	Name = "Box To Open",
+	Default = "Regular",
+	Options = {"Regular", "Unreal", "Inferno", "Luxury", "Red-Banded", "Easter", "Pumpkin", "Festive"},
+	Callback = function(Value)
+		boxToOpen = Value
+	end    
+})
+
+BoxSection:AddButton({
+	Name = "Change Clover Status",
+	Callback = function()
+        game:GetService("ReplicatedStorage").ToggleBoxItem:InvokeServer("Clover")
+	end
+})
+
+RpSection:AddToggle({
+	Name = "Toggle RP Farm",
+	Default = false,
+	Callback = function(Value)
+		OreToFurnace = Value
+		oresToFurnace()
+	end    
+})
+
+RpSection:AddTextbox({
+	Name = "Name Of RP Furnace",
+	Default = "Case Sensitive",
+	TextDisappear = false,
+	Callback = function(Value)
+		rpFurnaceString = Value
+	end	  
+})
+
+MovementSection:AddSlider({
+	Name = "Walkspeed Modifier",
+	Min = 16,
+	Max = 500,
+	Default = 16,
+	Color = Color3.fromRGB(255,255,255),
+	Increment = 5,
+	ValueName = "Walkspeed",
+	Callback = function(Value)
+		game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
+	end    
+})
+
+MovementSection:AddSlider({
+	Name = "Jump Height Modifier",
+	Min = 50,
+	Max = 500,
+	Default = 50,
+	Color = Color3.fromRGB(255,255,255),
+	Increment = 5,
+	ValueName = "Walkspeed",
+	Callback = function(Value)
+		game.Players.LocalPlayer.Character.Humanoid.JumpPower = Value
+	end    
+})
+
+TransitionSection:AddParagraph("Invisble Transition Screen","Always On")
+
+while wait() do
+	playergui.TransitionScreen.Visible = false
+	playergui.TransitionScreen.BackgroundTransparency = 1
+end
+
+OrionLib:Init()
