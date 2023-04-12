@@ -98,7 +98,7 @@ function shinyTracker()
                 end
                 if string.find(shinyGot, "⭐") then
                     executeShinyWebHook()
-                    wait(1.5)
+                    wait(1)
                     shinyGot = "BOMBBBB"
                 end
              end)
@@ -132,22 +132,6 @@ function executeShinyWebHook()
         print(itemGot)
 end
 
--- Remote Spam
-
-function autoRemote()
-	while AutoRemote == true do
-		game:GetService("ReplicatedStorage").RemoteDrop:FireServer()
-		wait(remoteDelay)
-	end
-end
-
-function autoPulse()
-	while AutoPulse == true do
-		game:GetService("ReplicatedStorage").Pulse:FireServer()
-		wait(pulseDelay)
-	end
-end
-
 -- Misc
 
 function openBoxes()
@@ -159,7 +143,7 @@ end
 
 function oresToFurnace()
 	while OreToFurnace do
-		local rpFurnace = playersBase[tostring(rpFurnaceString)]
+		local rpFurnace = playersBase[tostring(rpFurnaceString)] and playersBase[tostring(rpFurnaceString)].Model.Lava
 		if rpFurnace then
 			for i, v in pairs(BaseOres:GetChildren()) do
 				v.CFrame = rpFurnace.CFrame
@@ -206,6 +190,22 @@ function destroyOres()
     for i, v in pairs(BaseOres:GetChildren()) do
         v.CFrame = playersBasePos.CFrame
     end
+end
+
+-- Remote Spam
+
+function autoRemote()
+	while AutoRemote == true do
+		game:GetService("ReplicatedStorage").RemoteDrop:FireServer()
+		wait(remoteDelay)
+	end
+end
+
+function autoPulse()
+	while AutoPulse == true do
+		game:GetService("ReplicatedStorage").Pulse:FireServer()
+		wait(pulseDelay)
+	end
 end
     
 -- Auto Reborn
@@ -578,13 +578,6 @@ TeleportsSection:AddButton({
 	Name = "Masked Man",
 	Callback = function()
 		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(game.workspace.Market.Handle.Position)
-  	end    
-})
-
-TeleportsSection:AddButton({
-	Name = "Draedon",
-	Callback = function()
-		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(game:GetService("Workspace").Map.Draedon)
   	end    
 })
 
