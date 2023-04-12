@@ -15,6 +15,8 @@ local CrateTP = true
 local EggTP = true
 local OpenBoxes = true
 local OreToFurnace = true
+local AutoRemote =  true
+local AutoPulsar = true
 
 -- Player
 
@@ -50,7 +52,12 @@ local firstLayoutToLoad = "Layout1"
 local secondLayoutToLoad = "Layout2"
 local rebirthAmount = game:GetService("Players").LocalPlayer.Rebirths
 
+-- Delays
+
 local waitsplittime = .75
+
+local remoteDelay = 0.001
+local pulseDelay = 0.001
 
 -- Base Tweaks
 
@@ -91,7 +98,7 @@ function shinyTracker()
                 end
                 if string.find(shinyGot, "⭐") then
                     executeShinyWebHook()
-                    wait(.1)
+                    wait(1.5)
                     shinyGot = "BOMBBBB"
                 end
              end)
@@ -125,18 +132,34 @@ function executeShinyWebHook()
         print(itemGot)
 end
 
+-- Remote Spam
+
+function autoRemote()
+	while AutoRemote == true do
+		game:GetService("ReplicatedStorage").RemoteDrop:FireServer()
+		wait(remoteDelay)
+	end
+end
+
+function autoPulse()
+	while AutoPulse == true do
+		game:GetService("ReplicatedStorage").Pulse:FireServer()
+		wait(pulseDelay)
+	end
+end
+
 -- Misc
 
 function openBoxes()
     while OpenBoxes == true do
             game:GetService("ReplicatedStorage").MysteryBox:InvokeServer(boxToOpen)
-        wait(.5)
+        wait(4.5)
     end
 end
 
 function oresToFurnace()
 	while OreToFurnace do
-		local rpFurnace = playersBase[tostring(rpFurnaceString)] and playersBase[tostring(rpFurnaceString)].Model.Lava
+		local rpFurnace = playersBase[tostring(rpFurnaceString)]
 		if rpFurnace then
 			for i, v in pairs(BaseOres:GetChildren()) do
 				v.CFrame = rpFurnace.CFrame
@@ -345,8 +368,8 @@ local TeleportsTab = Window:MakeTab({
 	PremiumOnly = false
 })
 
-local LayoutsTab = Window:MakeTab({
-	Name = "Layouts",
+local RemoteSpamTab = Window:MakeTab({
+	Name = "Remote Spam",
 	Icon = "rbxassetid://4483345998",
 	PremiumOnly = false
 })
@@ -558,6 +581,13 @@ TeleportsSection:AddButton({
   	end    
 })
 
+TeleportsSection:AddButton({
+	Name = "Draedon",
+	Callback = function()
+		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(game:GetService("Workspace").Map.Draedon)
+  	end    
+})
+
 CrateTpSection:AddToggle({
 	Name = "Toggle Crate TP",
 	Default = false,
@@ -619,10 +649,65 @@ EggTpSection:AddButton({
 	end
 })
 
--- Layouts
+-- Remote Spam
 
-local LayoutStealerSection = LayoutsTab:AddSection({
-	Name = "Layout Stealer"
+local RemoteSection = RemoteSpamTab:AddSection({
+	Name = "Remote Stuff"
+})
+
+local AutoPulseSection = RemoteSpamTab:AddSection({
+	Name = "Pulsar Stuff"
+})
+
+RemoteSection:AddToggle({
+	Name = "Toggle Auto Remote",
+	Default = false,
+	Callback = function(Value)
+		AutoRemote = Value
+		autoRemote()
+	end    
+})
+
+RemoteSection:AddSlider({
+	Name = "Auto Remote Delay",
+	Min = 0.0001,
+	Max = 10,
+	Default = 0.0001,
+	Color = Color3.fromRGB(255,255,255),
+	Increment = .001,
+	ValueName = "Delay",
+	Callback = function(Value)
+		remoteDelay = Value
+	end    
+})
+
+AutoPulseSection:AddToggle({
+	Name = "Toggle Auto Pulse",
+	Default = false,
+	Callback = function(Value)
+		AutoPulse = Value
+		autoPulse()
+	end    
+})
+
+AutoPulseSection:AddSlider({
+	Name = "Auto Pulse Delay",
+	Min = 0.0001,
+	Max = 10,
+	Default = 0.0001,
+	Color = Color3.fromRGB(255,255,255),
+	Increment = .001,
+	ValueName = "Delay",
+	Callback = function(Value)
+		pulseDelay = Value
+	end    
+})
+
+AutoPulseSection:AddButton({
+	Name = "Pulse Once",
+	Callback = function()
+		game:GetService("ReplicatedStorage").Pulse:FireServer()
+  	end    
 })
 
 -- Vendors
@@ -756,14 +841,5 @@ while wait() do
 	playergui.TransitionScreen.Visible = false
 	playergui.TransitionScreen.BackgroundTransparency = 1
 end
-
--- Anti AFK
-
-local vu = game:GetService("VirtualUser")
-game:GetService("Players").LocalPlayer.Idled:connect(function()
-   vu:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
-   wait(1)
-   vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
-end)
 
 OrionLib:Init()
