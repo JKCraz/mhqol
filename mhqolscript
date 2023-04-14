@@ -1,3 +1,19 @@
+
+--[[ TO DO:
+
+make show multiple reborn 
+
+--]]
+
+-- Anti AFK
+
+local vu = game:GetService("VirtualUser")
+game:GetService("Players").LocalPlayer.Idled:connect(function()
+   vu:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+   wait(1)
+   vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+end)
+
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
 local Window = OrionLib:MakeWindow({Name = "Jasithis Miner's Haven QOL", HidePremium = false, IntroText = "Loading", SaveConfig = true, ConfigFolder = "MHQOL"})
 
@@ -7,7 +23,6 @@ local Window = OrionLib:MakeWindow({Name = "Jasithis Miner's Haven QOL", HidePre
 
 local AutoReborn = true
 local ConvSpeed = true
-local ShinyTracker = true
 local OreTweaks = true
 local FreezeOres = true
 local RotOres = true
@@ -16,7 +31,12 @@ local EggTP = true
 local OpenBoxes = true
 local OreToFurnace = true
 local AutoRemote =  true
-local AutoPulsar = true
+local AutoPulse = true
+local RebornTracker = true
+local ShinyTracker = true
+local DecimalTracker = true
+local kickAtLife = true
+local AutoBaz = true
 
 -- Player
 
@@ -51,6 +71,7 @@ local EggNames = {"Coconut Egg", "Energy Egg", "Armored Egg", "Dustdevil Egg", "
 local firstLayoutToLoad = "Layout1"
 local secondLayoutToLoad = "Layout2"
 local rebirthAmount = game:GetService("Players").LocalPlayer.Rebirths
+local rebirthAmountValue = game:GetService("Players").LocalPlayer.Rebirths.Value
 
 -- Delays
 
@@ -79,65 +100,201 @@ local easterisland = game:GetService("Workspace").Easter["EASTER ISLAND EGG SPAW
 -- Misc Variables
 
 local boxToOpen = "BOMBBBB"
-
 local rpFurnaceString = "Basic Furnace"
+local lifeToStop = "100000000000"
+
+local playersPrevLocation = "234283492389423004982340823890489"
 
 --Functions
 
 -- Webhooks
 
-function shinyTracker()
-    if ShinyTracker == true then
-        print("shiny tracker enabled")
-        while wait(1) do -- checks for items gained
-            notiGui.ChildAdded:Connect(function(child)
-                print("Item Gained:", child.Title.Text)
-                itemGot = child.Title.Text
-                if string.find(itemGot, "⭐") then
-                    shinyGot = itemGot
-                end
-                if string.find(shinyGot, "⭐") then
-                    executeShinyWebHook()
-                    wait(1)
-                    shinyGot = "BOMBBBB"
-                end
-             end)
+if syn then request = syn.request end
+
+game:GetService("Players").LocalPlayer.PlayerGui.GUI.Notifications.ChildAdded:Connect(function(v)
+	if v.Name == "ItemTemplate" or "ItemTemplateMini" and v:FindFirstChild("Title") and v:FindFirstChild("Tier") and v:FindFirstChild("Icon") then
+		if RebornTracker == true and (v.Tier.Text == "Reborn" or v.Tier.Text == "Adv. Reborn" or v.Tier.Text == "Shiny Reborn" or v.Tier.Text == "Limited Shiny") then
+			rebirthAmountValue = game:GetService("Players").LocalPlayer.Rebirths.Value
+			local ImageId = v.Icon.Image
+		if string.find(ImageId,"rbxasset") then
+		   ImageId = string.split(tostring(v.Icon.Image),"//")[2]
+		end
+		local ImageData = game:GetService("HttpService"):JSONDecode(request({Url="https://thumbnails.roblox.com/v1/assets?assetIds="..tonumber(ImageId).."&returnPolicy=PlaceHolder&size=512x512&format=Png&isCircular=false"}).Body)
+		local ImageLink = ImageData.data[1]["imageUrl"]
+		local Data = {["embeds"]= {{
+			["title"] = "**New Reborn**",
+			["fields"] = {
+				{
+					["name"] = "**Item**",
+					["value"] =  tostring("```\n"..v.Title.Text.."```"),
+					["inline"] = true
+				},
+				{
+					["name"] = ("**Tier**"),
+					["value"] =  tostring("```\n"..v.Tier.Text.."```"),
+					["inline"] = true
+				},
+				{
+					["name"] = ("**Life**"),
+					["value"] =  tostring("```\n"..rebirthAmountValue.."```"),
+					["inline"] = true
+				},
+			},
+		["color"] = tonumber("0x"..tostring(string.split((string.format("#%02X%02X%02X", v.BackgroundColor3.R * 0xFF,v.BackgroundColor3.G * 0xFF, v.BackgroundColor3.B * 0xFF)),"#")[2])),
+		["footer"] = {["text"] = "Jasithis Item Tracker | "..os.date()},
+		["thumbnail"] = {["url"]=tostring(ImageLink)}
+		}}
+	}
+		request({Url = "https://discord.com/api/webhooks/998690446425477190/3Cj-mBf6uV3BSjs_7jPLHpALpVTH_VCqhcoxfqyTNLdz9AVktwuAFiPLcFenMRjNtesw".."?wait=true", Body =  game:GetService("HttpService"):JSONEncode(Data), Method = "POST", Headers = {["content-type"] = "application/json"}})
+		end
+
+		if ShinyTracker == true and (v.Tier.Text == "Shiny Reborn" or v.Tier.Text == "Limited Shiny") then
+			rebirthAmountValue = game:GetService("Players").LocalPlayer.Rebirths.Value
+			local ImageId = v.Icon.Image
+			if string.find(ImageId,"rbxasset") then
+				ImageId = string.split(tostring(v.Icon.Image),"//")[2]
+			end
+			local ImageData = game:GetService("HttpService"):JSONDecode(request({Url="https://thumbnails.roblox.com/v1/assets?assetIds="..tonumber(ImageId).."&returnPolicy=PlaceHolder&size=512x512&format=Png&isCircular=false"}).Body)
+			local ImageLink = ImageData.data[1]["imageUrl"]
+			local Data = {
+				["content"] = "@Jasithis#1142",
+				["embeds"] = {{
+					["title"] = "**New Shiny**",
+					["fields"] = {
+						{
+							["name"] = "**Item**",
+							["value"] =  tostring("```\n"..v.Title.Text.."```"),
+							["inline"] = true
+						},
+						{
+							["name"] = ("**Tier**"),
+							["value"] =  tostring("```\n"..v.Tier.Text.."```"),
+							["inline"] = true
+						},
+						{
+							["name"] = ("**Life**"),
+							["value"] =  tostring("```\n"..rebirthAmountValue.."```"),
+							["inline"] = true
+						},
+					},
+					["color"] = tonumber("0x"..tostring(string.split((string.format("#%02X%02X%02X", v.BackgroundColor3.R * 0xFF,v.BackgroundColor3.G * 0xFF, v.BackgroundColor3.B * 0xFF)),"#")[2])),
+					["footer"] = {["text"] = "Jasithis Item Tracker | "..os.date()},
+					["thumbnail"] = {["url"]=tostring(ImageLink)}
+				}}
+			}
+			request({
+				Url = "https://discord.com/api/webhooks/998689710006354010/mFEQQlRDI2JO1UAKqYB2RMkYNRyGk0fT0i8FW7FIWXcqqB6rCtOUezllsGpaAEzTja9n".."?wait=true",
+				Body =  game:GetService("HttpService"):JSONEncode(Data),
+				Method = "POST",
+				Headers = {
+					["content-type"] = "application/json"
+				}
+			})
+		end
+
+		if DecimalTracker == true and (v.Icon.Image == "rbxassetid://4580108192" or v.Icon.Image == "rbxassetid://4657508869" or v.Icon.Image == "rbxassetid://4993136413" or v.Icon.Image == "rbxassetid://4400530325" or v.Icon.Image == "rbxassetid://4506762215" or v.Icon.Image == "rbxassetid://5258149276" or v.Icon.Image == "rbxassetid://6797983431" or v.Icon.Image == "rbxassetid://4769428868" or v.Icon.Image == "rbxassetid://4871980947" or v.Icon.Image == "rbxassetid://4835901686" or v.Icon.Image == "rbxassetid://5494226098") then
+			rebirthAmountValue = game:GetService("Players").LocalPlayer.Rebirths.Value
+			local ImageId = v.Icon.Image
+		if string.find(ImageId,"rbxasset") then
+		   ImageId = string.split(tostring(v.Icon.Image),"//")[2]
+		end
+		local ImageData = game:GetService("HttpService"):JSONDecode(request({Url="https://thumbnails.roblox.com/v1/assets?assetIds="..tonumber(ImageId).."&returnPolicy=PlaceHolder&size=512x512&format=Png&isCircular=false"}).Body)
+		local ImageLink = ImageData.data[1]["imageUrl"]
+		local Data = {["embeds"]= {{
+			["title"] = "**New Decimal**",
+			["fields"] = {
+				{
+					["name"] = "**Item**",
+					["value"] =  tostring("```\n"..v.Title.Text.."```"),
+					["inline"] = true
+				},
+				{
+					["name"] = ("**Tier**"),
+					["value"] =  tostring("```\n"..v.Tier.Text.."```"),
+					["inline"] = true
+				},
+				{
+					["name"] = ("**Life**"),
+					["value"] =  tostring("```\n"..rebirthAmountValue.."```"),
+					["inline"] = true
+				},
+			},
+		["color"] = tonumber("0x"..tostring(string.split((string.format("#%02X%02X%02X", v.BackgroundColor3.R * 0xFF,v.BackgroundColor3.G * 0xFF, v.BackgroundColor3.B * 0xFF)),"#")[2])),
+		["footer"] = {["text"] = "Jasithis Item Tracker | "..os.date()},
+		["thumbnail"] = {["url"]=tostring(ImageLink)}
+		}}
+	}
+		request({Url = "https://discord.com/api/webhooks/998690105478877214/YOurjv5MWjwCkIFOvk4Dbjk9FSLk8QQpb6oLI2EC90OrCgnJBM-41KlyzV0jhE8KoAW3".."?wait=true", Body =  game:GetService("HttpService"):JSONEncode(Data), Method = "POST", Headers = {["content-type"] = "application/json"}})
+		end
+
+	end
+ end)
+
+ -- Layout Stealer
+
+ local FetchItemModule = require(game:GetService("ReplicatedStorage").FetchItem)
+ local TycoonBase = game.Players.LocalPlayer.PlayerTycoon.Value.Base
+ local LayoutPlayerSelected = "CrazifiedJK"
+ local LayoutCopierSelected = 1
+
+ function ShopItems()
+    for i,v in pairs(getgc(true)) do
+        if type(v) == "table" and rawget(v,"Miscs") then
+            return v["All"]
         end
     end
-end
+ end
+ function HasItem(Needed)
+    if game:GetService("ReplicatedStorage").HasItem:InvokeServer(Needed) > 0 then
+        return true
+    end
+    return false
+ end
+ function IsShopItem(Needed)
+    for i,v in pairs(ShopItems()) do
+        if tonumber(v.ItemId.Value) == tonumber(Needed) then
+            return true
+        end
+    end
+    return false
+ end
 
-function executeShinyWebHook()
-    msg = {
-        ["embeds"] = {{
-        ["color"] = 13708129,
-        ["description"] = shinyGot,
-        ["author"] = {
-        ["name"] = player.DisplayName.." obtained a shiny!"
-        }}
-        }
-        }
-        
-        local response = syn.request(
-        {
-        Url = "https://discord.com/api/webhooks/1095076075295490049/tqNGGx-MaxMFHF2C_-saMifH2UvQfwxZdNZQ34Li3kUCfFJCImZhFiJhxRlcDXslast2",
-        Method = "POST",
-        Headers = {
-        ["Content-Type"] = "application/json"
-        },
-        Body = game:GetService("HttpService"):JSONEncode(msg)
-        }
-        )
-
-        print(shinyGot)
-        print(itemGot)
-end
+ function buildLoadout()
+	for i,v in pairs(game:GetService("HttpService"):JSONDecode(game:GetService("Players")[LayoutPlayerSelected].Layouts["Layout"..LayoutCopierSelected].Value)) do
+		task.spawn(function()
+			if HasItem(v["ItemId"]) == true then
+				local TopLeft = TycoonBase.CFrame * CFrame.new(Vector3.new(TycoonBase.Size.X/2, 0, TycoonBase.Size.Z/2))
+				local Position = TopLeft * Vector3.new(tonumber(v.Position[1]), tonumber(v.Position[2]), tonumber(v.Position[3]))
+				local Rotation = Vector3.new(tonumber(v.Position[4]),tonumber(v.Position[5]),tonumber(v.Position[6]))
+				local NewCf = CFrame.new(Position, Position + (Rotation * 5))
+				game:GetService("ReplicatedStorage").PlaceItem:InvokeServer(FetchItemModule.Get(nil,v["ItemId"]).Name,NewCf,{TycoonBase})
+				task.wait()
+			elseif HasItem(v["ItemId"]) == false and IsShopItem(v["ItemId"]) == true and game:GetService("Players").LocalPlayer.PlayerGui.GUI.Money.Value >= game:GetService("ReplicatedStorage").Items[FetchItemModule.Get(nil,v["ItemId"]).Name].Cost.Value then
+				game:GetService("ReplicatedStorage").BuyItem:InvokeServer(FetchItemModule.Get(nil,v["ItemId"]).Name,1)
+				task.wait()
+				local TopLeft = TycoonBase.CFrame * CFrame.new(Vector3.new(TycoonBase.Size.X/2, 0, TycoonBase.Size.Z/2))
+				local Position = TopLeft * Vector3.new(tonumber(v.Position[1]), tonumber(v.Position[2]), tonumber(v.Position[3]))
+				local Rotation = Vector3.new(tonumber(v.Position[4]),tonumber(v.Position[5]),tonumber(v.Position[6]))
+				local NewCf = CFrame.new(Position, Position + (Rotation * 5))
+				game:GetService("ReplicatedStorage").PlaceItem:InvokeServer(FetchItemModule.Get(nil,v["ItemId"]).Name,NewCf,{TycoonBase})
+				task.wait()
+			else
+				if IsShopItem(v["ItemId"]) == true then
+					print("Cant Afford Item, "..FetchItemModule.Get(nil,v["ItemId"]).Name)
+				else
+					print("Cant Find, "..FetchItemModule.Get(nil,v["ItemId"]).Name)
+				end
+			end
+		end)
+	end
+ end
 
 -- Misc
 
 function openBoxes()
     while OpenBoxes == true do
             game:GetService("ReplicatedStorage").MysteryBox:InvokeServer(boxToOpen)
-        wait(4.5)
+        wait(4.25)
     end
 end
 
@@ -150,6 +307,13 @@ function oresToFurnace()
 			end
 		end
 		wait()
+	end
+end
+
+function buyBaz()
+	while AutoBaz do
+		game:GetService("ReplicatedStorage").BuyItem:InvokeServer("Basic Iron Mine",99)
+	wait(0.01)
 	end
 end
 
@@ -174,6 +338,9 @@ function rotOres()
 	while RotOres do
 		for i, v in pairs(BaseOres:GetChildren()) do
 			v.Orientation = Vector3.new(0, 0, 0)
+			v.Rotation = Vector3.new(0, 0, 0)
+			v.CFrame = CFrame.new(v.Position) * CFrame.Angles(0,0,0)
+			v.RotVelocity = Vector3.new(0, 0, 0)
 		end
 		wait()
 	end
@@ -219,6 +386,16 @@ function autoReborn()
     end
 end
 
+function lifeKickFunction()
+	while kickAtLife == true do
+		rebirthAmountValue = game:GetService("Players").LocalPlayer.Rebirths.Value
+		if tonumber(lifeToStop) and tonumber(lifeToStop) <= rebirthAmountValue then
+			player:Kick("life wanted hit")
+		end
+	wait(3)
+	end
+end
+
 function autoLayout()
 	if AutoLayout == true then
 		game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",firstLayoutToLoad)
@@ -228,7 +405,7 @@ function autoLayout()
 end
 
 game:GetService("Players").LocalPlayer.Rebirths:GetPropertyChangedSignal("Value"):Connect(function()
-	wait(0.5)
+	wait(0.3)
 	pcall(autoLayout)
 end)
 
@@ -240,6 +417,21 @@ function convSpeed()
         adjustSpeedValue.Value = conveyorSpeed
         wait(0.000001)
     end    
+end
+
+function openCraftsman()
+	local gui = game.Players.LocalPlayer.PlayerGui:WaitForChild("GUI")
+	if gui.Craftsman.Visible == false then
+	gui.Craftsman.Visible = true
+	local lock = gui.Craftsman:getDescendants()
+	for i=1,#lock do
+	if lock[i].Name == "LockedItem" then
+	lock[i].Visible = false
+	end
+	end
+	else
+	gui.Craftsman.Visible = false
+	end
 end
 
 -- Crate & Egg TP Functions
@@ -285,11 +477,7 @@ local function eggTP()
                     if #v:GetChildren() > 0 then
                         eggsFound = true
                         char:MoveTo(v.Position)
-                        for _, a in pairs(v:GetDescendants()) do
-                            if a:IsA("ProximityPrompt") then
-                                fireproximityprompt(a)
-                            end
-                        end
+						fireproximityprompt(v.ProximityPrompt)
                         wait(eggTpDelay)
                     end
                 end
@@ -362,6 +550,12 @@ local WebhooksTab = Window:MakeTab({
 	PremiumOnly = false
 })
 
+local LayoutsTab = Window:MakeTab({
+	Name = "Layouts",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
 local TeleportsTab = Window:MakeTab({
 	Name = "Teleports",
 	Icon = "rbxassetid://4483345998",
@@ -401,6 +595,24 @@ AutoRebornSection:AddToggle({
     end
 })
 
+AutoRebornSection:AddToggle({
+	Name = "Toggle Kick At Life",
+	Default = false,
+	Callback = function(Value)
+		kickAtLife = Value
+        lifeKickFunction()
+    end
+})
+
+AutoRebornSection:AddTextbox({
+	Name = "Life To Kick",
+	Default = "1000000000",
+	TextDisappear = false,
+	Callback = function(Value)
+		lifeToStop = Value
+	end	  
+})
+
 local AutoLayoutSection = AutoRebornTab:AddSection({
 	Name = "Auto Load"
 })
@@ -436,9 +648,9 @@ AutoLayoutSection:AddSlider({
 	Name = "Split Wait Time",
 	Min = 0,
 	Max = 30,
-	Default = .75,
+	Default = .10,
 	Color = Color3.fromRGB(255,255,255),
-	Increment = .25,
+	Increment = .05,
 	ValueName = "Split Time",
 	Callback = function(Value)
 		waitsplittime = Value
@@ -512,23 +724,78 @@ OreSection:AddButton({
 
 -- Webhook
 
-local WebhooksSection = WebhooksTab:AddSection({
+local RebornTrackerSection = WebhooksTab:AddSection({
+	Name = "Reborn Tracker"
+})
+
+local ShinySection = WebhooksTab:AddSection({
 	Name = "Shiny Tracker"
 })
 
-WebhooksSection:AddToggle({
-	Name = "Toggle Shiny Tracker",
+local DecimalSection = WebhooksTab:AddSection({
+	Name = "Decimal Tracker"
+})
+
+RebornTrackerSection:AddToggle({
+	Name = "Toggle Reborn Tracker",
 	Default = false,
 	Callback = function(Value)
-		ShinyTracker = Value
-		shinyTracker()
+            RebornTracker = Value
 	end    
 })
 
-WebhooksSection:AddButton({
-	Name = "Test Webhook",
+ShinySection:AddToggle({
+	Name = "Toggle Shiny Tracker",
+	Default = false,
+	Callback = function(Value)
+            ShinyTracker = Value
+	end    
+})
+
+DecimalSection:AddToggle({
+	Name = "Toggle Decimal Tracker",
+	Default = false,
+	Callback = function(Value)
+            DecimalTracker = Value
+	end    
+})
+
+-- Layouts
+
+local LayoutSection = LayoutsTab:AddSection({
+	Name = "Layout Stealer"
+})
+
+LayoutSection:AddTextbox({
+	Name = "Player To Steal Layout From",
+	Default = "Player Name",
+	TextDisappear = false,
+	Callback = function(Value)
+		LayoutPlayerSelected = Value
+	end	  
+})
+
+LayoutSection:AddDropdown({
+	Name = "Select Layout",
+	Default = "Layout 1",
+	Options = {"Layout 1", "Layout 2", "Layout 3"},
+	Callback = function(Value)
+		if Value == "Layout 1" then
+			LayoutCopierSelected = 1
+		end
+		if Value == "Layout 2" then
+			LayoutCopierSelected = 2
+		end
+		if Value == "Layout 3" then
+			LayoutCopierSelected = 3
+		end
+	end    
+})
+
+LayoutSection:AddButton({
+	Name = "Build Layout",
 	Callback = function()
-		executeShinyWebHook()
+		buildLoadout()
   	end    
 })
 
@@ -564,6 +831,13 @@ TeleportsSection:AddButton({
 	Name = "Craftsman",
 	Callback = function()
 		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-131.36438, 223.112289, 221.24263, -0.707134247, 0, 0.707079291, 0, 1, 0, -0.707079291, 0, -0.707134247)
+  	end    
+})
+
+TeleportsSection:AddButton({
+	Name = "Leaderboard",
+	Callback = function()
+		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-57.4749336, 179.949585, 315.975037, 0.836414933, -3.42000561e-08, -0.548096716, -6.54395249e-09, 1, -7.23841467e-08, 0.548096716, 6.41298996e-08, 0.836414933)
   	end    
 })
 
@@ -709,36 +983,25 @@ local VendorsSection = VendorsTab:AddSection({
 	Name = "Vendors"
 })
 
-VendorsSection:AddToggle({
-	Name = "Toggle Craftsman",
-	Default = false,
-	Callback = function(Value)
-          playergui.Craftsman.Visible = Value
-	end    
+VendorsSection:AddButton({
+	Name = "Open Craftsman",
+	Callback = function()
+		openCraftsman()
+  	end    
 })
 
-VendorsSection:AddToggle({
-	Name = "Toggle Draedon",
-	Default = false,
-	Callback = function(Value)
-          playergui.Craftsman.Visible = Value
-	end    
+VendorsSection:AddButton({
+	Name = "Open SpookMcDook",
+	Callback = function()
+		playergui.SpookMcDookShop.Visible = true
+  	end    
 })
 
-VendorsSection:AddToggle({
-	Name = "Toggle SpookMcDook",
-	Default = false,
-	Callback = function(Value)
-          playergui.SpookMcDookShop.Visible = Value
-	end    
-})
-
-VendorsSection:AddToggle({
-	Name = "Toggle Masked Man",
-	Default = false,
-	Callback = function(Value)
-          playergui.EventShop.Visible = Value
-	end    
+VendorsSection:AddButton({
+	Name = "Open Masked Man",
+	Callback = function()
+		playergui.EventShop.Visible = true
+  	end    
 })
 
 -- Misc
@@ -755,8 +1018,20 @@ local MovementSection = MiscTab:AddSection({
 	Name = "Movement"
 })
 
+local AutoDailySection = MiscTab:AddSection({
+	Name = "Auto Daily"
+})
+
+local BuySection = MiscTab:AddSection({
+	Name = "Auto Buy"
+})
+
 local TransitionSection = MiscTab:AddSection({
 	Name = "Transition Screen"
+})
+
+local AntiAFKSection = MiscTab:AddSection({
+	Name = "Anti AFK"
 })
 
 BoxSection:AddToggle({
@@ -828,7 +1103,42 @@ MovementSection:AddSlider({
 	end    
 })
 
+AutoDailySection:AddButton({
+	Name = "Claim Fargield",
+	Callback = function()
+	    print(playerPos)
+		playerPos = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+		playersPrevLocation = Vector3.new(playerPos.X, playerPos.Y, playerPos.Z)
+		print(playersPrevLocation)
+		wait(.25)
+		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-325.110077, 104.414345, 525.674622, -0.952662528, 5.33232161e-08, 0.304029793, 4.14620338e-08, 1, -4.54688696e-08, -0.304029793, -3.07107939e-08, -0.952662528)
+		print("tped to fargield")
+		wait(.25)
+		fireproximityprompt(game:GetService("Workspace").Map.Fargield.Internal.ProximityPrompt)
+		wait(1)
+		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(playersPrevLocation)
+	end
+})
+
+AutoDailySection:AddButton({
+	Name = "Claim SpookMcDook",
+	Callback = function()
+			game:GetService("ReplicatedStorage").RedeemFreeBox:FireServer()
+	end
+})
+
+BuySection:AddToggle({
+	Name = "Toggle Bazingium Mine Farm",
+	Default = false,
+	Callback = function(Value)
+		AutoBaz = Value
+		buyBaz()
+	end    
+})
+
 TransitionSection:AddParagraph("Invisble Transition Screen","Always On")
+
+AntiAFKSection:AddParagraph("Anti AFK","Always On")
 
 while wait() do
 	playergui.TransitionScreen.Visible = false
