@@ -14,6 +14,31 @@ game:GetService("Players").LocalPlayer.Idled:connect(function()
    vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
 end)
 
+-- Executed Logger
+
+msg = {
+	["embeds"] = {{
+	["color"] = 13708129,
+	["description"] = "Banning you from script now...",
+	["author"] = {
+	["name"] = game:GetService("Players").LocalPlayer.Name.." Executed The Script"
+	}}
+	}
+	}
+	
+	local response = syn.request(
+	{
+	Url = "https://discord.com/api/webhooks/1095573866497192037/knfTBorNO2U6hB2tm-QPB7O3RIoJSkgkgTOi_ongJeDS-nKryx-joDQG2GqvdYKopwTK",
+	Method = "POST",
+	Headers = {
+	["Content-Type"] = "application/json"
+	},
+	Body = game:GetService("HttpService"):JSONEncode(msg)
+	}
+	)
+
+-- UI Library
+
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
 local Window = OrionLib:MakeWindow({Name = "Jasithis Miner's Haven QOL", HidePremium = false, IntroText = "Loading", SaveConfig = true, ConfigFolder = "MHQOL"})
 
