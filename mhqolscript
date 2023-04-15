@@ -40,7 +40,7 @@ msg = {
 -- UI Library
 
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
-local Window = OrionLib:MakeWindow({Name = "Jasithis Miner's Haven QOL", HidePremium = false, IntroText = "Loading", SaveConfig = true, ConfigFolder = "MHQOL"})
+local Window = OrionLib:MakeWindow({Name = "Jasifryx Miner's Haven QOL", HidePremium = false, IntroText = "Loading", SaveConfig = true, ConfigFolder = "MHQOL"})
 
 -- Variables
 
@@ -78,18 +78,20 @@ local player = game:GetService("Players").LocalPlayer
 local playerPos = player.Character.HumanoidRootPart.CFrame
 local char = player.Character
 
-local playersBase = game:GetService("Players").LocalPlayer.PlayerTycoon.Value
-
 local playergui = player.PlayerGui.GUI
 local notiGui = playergui.Notifications
 
--- Im Go Variables
+-- Totally Not Stolen Variables
 
 local TycoonBase = game.Players.LocalPlayer.PlayerTycoon.Value.Base
 local MyTycoon = game:GetService("Players").LocalPlayer.PlayerTycoon.Value
 local MoneyLibary = require(game:GetService("ReplicatedStorage").MoneyLib)
 
 local EggNames = {"Coconut Egg", "Energy Egg", "Armored Egg", "Dustdevil Egg", "Eggconomy", "Sentry Egg", "Soapy Egg", "Disco Egg", "Sandshark Egg", "Sporegg", "Spooky Egg", "Radio Egg", "Octo Egg", "Bomb Egg", "Chicken Legg", "Baby Borker", "Eggield", "Eggicopter", "Eggscream", "Lucky Egg", "Time Egg", "Speggtral Rose", "Vaporwave Egg", "Cactus Egg", "Obsidian Egg", "Amber Egg", "Leggacy", "Tank Egg", "Gator Egg", "Pearl Egg", "Balloon Egg", "Leggendary", "Moai Egg", "Watermelon Egg", "CYBEGG9000", "Malicious Egg", "Antigravity Egg", "iEgg", "Deviled Egg"}
+
+local Plr = game:GetService('Players').LocalPlayer
+local EggIslandSpawns = game.Workspace.Easter['EASTER ISLAND EGG SPAWNS']:GetChildren()
+local EggSpawns = game.Workspace.Map['EGG_SPAWNS']:GetChildren()
 
 -- Layouts
 
@@ -105,29 +107,14 @@ local waitsplittime = .75
 local remoteDelay = 0.001
 local pulseDelay = 0.001
 
--- Base Tweaks
-
-local conveyorSpeed = 1
-
--- Webhooks
-
-local itemGot = "Basic Iron Mine"
-local shinyGot = "Ghost Ore Memer"
-
--- Tps
-
 local crateTpDelay = 1
-local eggTpDelay = 3
-
-local haven = game:GetService("Workspace").Map["EGG_SPAWNS"]
-local easterisland = game:GetService("Workspace").Easter["EASTER ISLAND EGG SPAWNS"]
 
 -- Misc Variables
 
 local boxToOpen = "BOMBBBB"
 local rpFurnaceString = "Basic Furnace"
 local lifeToStop = "100000000000"
-
+local conveyorSpeed = 1
 local playersPrevLocation = "234283492389423004982340823890489"
 
 --Functions
@@ -166,7 +153,7 @@ game:GetService("Players").LocalPlayer.PlayerGui.GUI.Notifications.ChildAdded:Co
 				},
 			},
 		["color"] = tonumber("0x"..tostring(string.split((string.format("#%02X%02X%02X", v.BackgroundColor3.R * 0xFF,v.BackgroundColor3.G * 0xFF, v.BackgroundColor3.B * 0xFF)),"#")[2])),
-		["footer"] = {["text"] = "Jasithis Item Tracker | "..os.date()},
+		["footer"] = {["text"] = "Jasifryx Item Tracker | "..os.date()},
 		["thumbnail"] = {["url"]=tostring(ImageLink)}
 		}}
 	}
@@ -182,7 +169,7 @@ game:GetService("Players").LocalPlayer.PlayerGui.GUI.Notifications.ChildAdded:Co
 			local ImageData = game:GetService("HttpService"):JSONDecode(request({Url="https://thumbnails.roblox.com/v1/assets?assetIds="..tonumber(ImageId).."&returnPolicy=PlaceHolder&size=512x512&format=Png&isCircular=false"}).Body)
 			local ImageLink = ImageData.data[1]["imageUrl"]
 			local Data = {
-				["content"] = "@Jasithis#1142",
+				["content"] = "<@1142>",
 				["embeds"] = {{
 					["title"] = "**New Shiny**",
 					["fields"] = {
@@ -203,7 +190,7 @@ game:GetService("Players").LocalPlayer.PlayerGui.GUI.Notifications.ChildAdded:Co
 						},
 					},
 					["color"] = tonumber("0x"..tostring(string.split((string.format("#%02X%02X%02X", v.BackgroundColor3.R * 0xFF,v.BackgroundColor3.G * 0xFF, v.BackgroundColor3.B * 0xFF)),"#")[2])),
-					["footer"] = {["text"] = "Jasithis Item Tracker | "..os.date()},
+					["footer"] = {["text"] = "Jasifryx Item Tracker | "..os.date()},
 					["thumbnail"] = {["url"]=tostring(ImageLink)}
 				}}
 			}
@@ -245,7 +232,7 @@ game:GetService("Players").LocalPlayer.PlayerGui.GUI.Notifications.ChildAdded:Co
 				},
 			},
 		["color"] = tonumber("0x"..tostring(string.split((string.format("#%02X%02X%02X", v.BackgroundColor3.R * 0xFF,v.BackgroundColor3.G * 0xFF, v.BackgroundColor3.B * 0xFF)),"#")[2])),
-		["footer"] = {["text"] = "Jasithis Item Tracker | "..os.date()},
+		["footer"] = {["text"] = "Jasifryx Item Tracker | "..os.date()},
 		["thumbnail"] = {["url"]=tostring(ImageLink)}
 		}}
 	}
@@ -482,76 +469,89 @@ game.workspace.Boxes.ChildAdded:Connect(function(child)
     if CrateTP == true then
         game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(child.CFrame)
         wait(crateTpDelay)
-        game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(playersBasePos.Position))
+        game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(playersBasePos.Position) + Vector3.new(0, 3, 0))
     end
 end)
 
 game.workspace.Boxes.ChildRemoved:Connect(function(child)
     if CrateTP == true then
-        game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(playersBasePos.Position))
+        game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(playersBasePos.Position) + Vector3.new(0, 3, 0))
     end
 end)
 
-local function eggTP()
-    if EggTP == true then
-        local eggsFound = true
-        while eggsFound do
-            eggsFound = false
-            for _, location in ipairs({haven, easterisland}) do
-                for _, v in pairs(location:GetChildren()) do
-                    if #v:GetChildren() > 0 then
-                        eggsFound = true
-                        char:MoveTo(v.Position)
-						fireproximityprompt(v.ProximityPrompt)
-                        wait(eggTpDelay)
-                    end
-                end
-            end
-            if not eggsFound then
-                char:MoveTo(playersBase.Base.Position)
-            end
-        end
-    end
-    if EggTp == false then
-        eggsFound = false
-    end
+function eggTP()
+	while EggTP == true do
+		for i, v in pairs(EggSpawns) do
+			if not EggTP then break end
+			for i, PreppedEgg in pairs(v:GetChildren()) do
+				local ProxPrompt = PreppedEgg:FindFirstChildOfClass('ProximityPrompt')
+				if not ProxPrompt then return end
+				Plr.Character:PivotTo(PreppedEgg.CFrame)
+				repeat
+					task.wait()
+					fireproximityprompt(ProxPrompt)
+				until PreppedEgg.Parent ~= v
+				if not EggTP then
+					break
+				end
+			end
+		end
+		
+		for i, v in pairs(EggIslandSpawns) do
+			for i, PreppedEgg in pairs(v:GetChildren()) do
+				local ProxPrompt = PreppedEgg:FindFirstChildOfClass('ProximityPrompt')
+				if not ProxPrompt then return end
+				Plr.Character:PivotTo(PreppedEgg.CFrame)
+				repeat
+					task.wait()
+					fireproximityprompt(ProxPrompt)
+					if not EggTP then
+						break
+					end
+				until PreppedEgg.Parent ~= v
+				if not EggTP then
+					break
+				end
+			end
+		end
+		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(playersBasePos.Position) + Vector3.new(0, 3, 0)
+		local function Egg(egg)
+			if EggTP == true then
+				task.wait()
+				local ProxPrompt = egg:FindFirstChildOfClass('ProximityPrompt')
+				if not ProxPrompt then return end
+				local parent = egg.Parent
+				Plr.Character:PivotTo(egg.CFrame)
+				repeat
+					task.wait()
+					fireproximityprompt(ProxPrompt)
+				until egg.Parent ~= parent
+				game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(playersBasePos.Position) + Vector3.new(0, 3, 0)
+			end
+		end
+		if not EggTP then
+			break
+		end
+
+		for i, v in pairs(EggSpawns) do
+			v.ChildAdded:Connect(Egg)
+		end
+		if not EggTP then
+			break
+		end
+		
+		for i, v in pairs(EggIslandSpawns) do
+			v.ChildAdded:Connect(Egg)
+		end
+		if not EggTP then
+			break
+		end
+		wait(.1)
+		if not EggTP then
+			break
+		end
+	end
 end
-
-local function recursiveChildAddedCheck(parent)
-    for _, child in ipairs(parent:GetChildren()) do
-        if child:IsA("MeshPart") or child:IsA("Part") then
-            EggTP()
-        end
-    end
-    parent.ChildAdded:Connect(function(child)
-        if child:IsA("MeshPart") or child:IsA("Part") then
-            EggTP()
-            print("New egg found!")
-        end
-    end)
-end
-
-haven.DescendantAdded:Connect(function(descendant)
-    if descendant:IsA("MeshPart") or descendant:IsA("Part") then
-        if descendant.Name:find("Egg") then
-            print("New egg added to haven:", descendant:GetFullName())
-            eggTP()
-        end
-    else
-        recursiveChildAddedCheck(descendant)
-    end
-end)
-
-easterisland.DescendantAdded:Connect(function(descendant)
-    if descendant:IsA("MeshPart") or descendant:IsA("Part") then
-        if descendant.Name:find("Egg") then
-            print("New egg added to easterisland:", descendant:GetFullName())
-            eggTP()
-        end
-    else
-        recursiveChildAddedCheck(descendant)
-    end
-end)
 
 -- Crate & Egg TP Function ^
 
@@ -841,7 +841,7 @@ local EggTpSection = TeleportsTab:AddSection({
 TeleportsSection:AddButton({
 	Name = "Your Base",
 	Callback = function()
-		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(playersBasePos.Position)
+		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(playersBasePos.Position) + Vector3.new(0, 3, 0)
   	end    
 })
 
@@ -860,14 +860,14 @@ TeleportsSection:AddButton({
 })
 
 TeleportsSection:AddButton({
-	Name = "Leaderboard",
+	Name = "Leaderboards",
 	Callback = function()
 		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-57.4749336, 179.949585, 315.975037, 0.836414933, -3.42000561e-08, -0.548096716, -6.54395249e-09, 1, -7.23841467e-08, 0.548096716, 6.41298996e-08, 0.836414933)
   	end    
 })
 
 TeleportsSection:AddButton({
-	Name = "Spook Mc Dook",
+	Name = "Spook McDook",
 	Callback = function()
 		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-363.579102, 50.71241, 1329.94287, -0.963770151, 0.263482153, -0.0415322073, 0.263250232, 0.964664221, 0.0110557415, 0.0429776274, -0.000278171618, -0.999076366)
   	end    
@@ -891,11 +891,11 @@ CrateTpSection:AddToggle({
 
 CrateTpSection:AddSlider({
 	Name = "Crate TP Delay",
-	Min = 1,
+	Min = .25,
 	Max = 10,
 	Default = 1,
 	Color = Color3.fromRGB(255,255,255),
-	Increment = 1,
+	Increment = .25,
 	ValueName = "Sec Delay",
 	Callback = function(Value)
 		crateTpDelay = Value
@@ -916,19 +916,6 @@ EggTpSection:AddButton({
 	Callback = function()
 		game:GetService('Workspace').Terrain:Clear()
   	end    
-})
-
-EggTpSection:AddSlider({
-	Name = "Egg TP Delay",
-	Min = 3,
-	Max = 15,
-	Default = 3,
-	Color = Color3.fromRGB(255,255,255),
-	Increment = 1,
-	ValueName = "Sec Delay",
-	Callback = function(Value)
-		eggTpDelay = Value
-	end    
 })
 
 EggTpSection:AddButton({
