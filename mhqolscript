@@ -40,6 +40,7 @@ local DecimalTracker = true
 local kickAtLife = true
 local AutoBaz = true
 local kickAtDecShiny = true
+local pulseWithReborn = true
 
 -- Player
 
@@ -406,6 +407,10 @@ function autoLayout()
 end
 
 game:GetService("Players").LocalPlayer.Rebirths:GetPropertyChangedSignal("Value"):Connect(function()
+	if pulseWithReborn == true then
+		wait(1)
+		game:GetService("ReplicatedStorage").Pulse:FireServer()
+	end
 	wait(loadAgainTime)
 	pcall(autoLayout)
 end)
@@ -1010,6 +1015,14 @@ AutoPulseSection:AddButton({
 	Callback = function()
 		game:GetService("ReplicatedStorage").Pulse:FireServer()
   	end    
+})
+
+AutoPulseSection:AddToggle({
+	Name = "Toggle Pulse When Layout Loaded",
+	Default = false,
+	Callback = function(Value)
+		pulseWithReborn = Value
+	end    
 })
 
 -- Vendors
