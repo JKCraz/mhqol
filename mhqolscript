@@ -1,1196 +1,1203 @@
 
---[[ TO DO:
+	--[[ TO DO:
 
-make show multiple reborn 
+	make show multiple reborn 
 
---]]
+	--]]
 
--- Anti AFK
+	-- Anti AFK
 
-local vu = game:GetService("VirtualUser")
-game:GetService("Players").LocalPlayer.Idled:connect(function()
-   vu:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
-   wait(1)
-   vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
-end)
+	local vu = game:GetService("VirtualUser")
+	game:GetService("Players").LocalPlayer.Idled:connect(function()
+	vu:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+	wait(1)
+	vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+	end)
 
--- UI Library
+	-- UI Library
 
-local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
-local Window = OrionLib:MakeWindow({Name = "Jasifryx Miner's Haven QOL", HidePremium = false, IntroText = "Loading", SaveConfig = true, ConfigFolder = "MHQOL"})
+	local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+	local Window = OrionLib:MakeWindow({Name = "Jasifryx Miner's Haven QOL", HidePremium = false, IntroText = "Loading", SaveConfig = true, ConfigFolder = "MHQOL"})
 
--- Variables
+	-- Variables
 
--- Toggles
+	-- Toggles
 
-local AutoReborn = true
-local ConvSpeed = true
-local OreTweaks = true
-local FreezeOres = true
-local RotOres = true
-local CrateTP = true
-local EggTP = true
-local OpenBoxes = true
-local OreToFurnace = true
-local AutoRemote =  true
-local AutoPulse = true
-local RebornTracker = true
-local ShinyTracker = true
-local DecimalTracker = true
-local kickAtLife = true
-local AutoBaz = true
-local kickAtDecShiny = true
-local pulseWithReborn = true
+	local AutoReborn = true
+	local ConvSpeed = true
+	local OreTweaks = true
+	local FreezeOres = true
+	local RotOres = true
+	local CrateTP = true
+	local EggTP = true
+	local OpenBoxes = true
+	local OreToFurnace = true
+	local AutoRemote =  true
+	local AutoPulse = true
+	local RebornTracker = true
+	local ShinyTracker = true
+	local DecimalTracker = true
+	local kickAtLife = true
+	local AutoBaz = true
+	local kickAtDecShiny = true
+	local pulseWithReborn = true
 
--- Player
+	-- Player
 
-local playersBase = game:GetService("Players").LocalPlayer.PlayerTycoon.Value
-local droppedParts = game:GetService("Workspace").DroppedParts
-local playerOres = droppedParts[tostring(playersBase)]:GetChildren()
+	local playersBase = game:GetService("Players").LocalPlayer.PlayerTycoon.Value
+	local droppedParts = game:GetService("Workspace").DroppedParts
+	local playerOres = droppedParts[tostring(playersBase)]:GetChildren()
 
-local BaseOres = game:GetService("Workspace").DroppedParts[tostring(playersBase)]
-local playersBasePos = game:GetService("Workspace").Tycoons[tostring(playersBase)].Base
+	local BaseOres = game:GetService("Workspace").DroppedParts[tostring(playersBase)]
+	local playersBasePos = game:GetService("Workspace").Tycoons[tostring(playersBase)].Base
 
-print(playersBase)
+	print(playersBase)
 
-local player = game:GetService("Players").LocalPlayer
-local playerPos = player.Character.HumanoidRootPart.CFrame
-local char = player.Character
+	local player = game:GetService("Players").LocalPlayer
+	local playerPos = player.Character.HumanoidRootPart.CFrame
+	local char = player.Character
 
-local playergui = player.PlayerGui.GUI
-local notiGui = playergui.Notifications
+	local playergui = player.PlayerGui.GUI
+	local notiGui = playergui.Notifications
 
--- Totally Not Stolen Variables
+	-- Totally Not Stolen Variables
 
-local TycoonBase = game.Players.LocalPlayer.PlayerTycoon.Value.Base
-local MyTycoon = game:GetService("Players").LocalPlayer.PlayerTycoon.Value
-local MoneyLibary = require(game:GetService("ReplicatedStorage").MoneyLib)
+	local TycoonBase = game.Players.LocalPlayer.PlayerTycoon.Value.Base
+	local MyTycoon = game:GetService("Players").LocalPlayer.PlayerTycoon.Value
+	local MoneyLibary = require(game:GetService("ReplicatedStorage").MoneyLib)
 
-local EggNames = {"Coconut Egg", "Energy Egg", "Armored Egg", "Dustdevil Egg", "Eggconomy", "Sentry Egg", "Soapy Egg", "Disco Egg", "Sandshark Egg", "Sporegg", "Spooky Egg", "Radio Egg", "Octo Egg", "Bomb Egg", "Chicken Legg", "Baby Borker", "Eggield", "Eggicopter", "Eggscream", "Lucky Egg", "Time Egg", "Speggtral Rose", "Vaporwave Egg", "Cactus Egg", "Obsidian Egg", "Amber Egg", "Leggacy", "Tank Egg", "Gator Egg", "Pearl Egg", "Balloon Egg", "Leggendary", "Moai Egg", "Watermelon Egg", "CYBEGG9000", "Malicious Egg", "Antigravity Egg", "iEgg", "Deviled Egg"}
+	local EggNames = {"Coconut Egg", "Energy Egg", "Armored Egg", "Dustdevil Egg", "Eggconomy", "Sentry Egg", "Soapy Egg", "Disco Egg", "Sandshark Egg", "Sporegg", "Spooky Egg", "Radio Egg", "Octo Egg", "Bomb Egg", "Chicken Legg", "Baby Borker", "Eggield", "Eggicopter", "Eggscream", "Lucky Egg", "Time Egg", "Speggtral Rose", "Vaporwave Egg", "Cactus Egg", "Obsidian Egg", "Amber Egg", "Leggacy", "Tank Egg", "Gator Egg", "Pearl Egg", "Balloon Egg", "Leggendary", "Moai Egg", "Watermelon Egg", "CYBEGG9000", "Malicious Egg", "Antigravity Egg", "iEgg", "Deviled Egg"}
 
-local Plr = game:GetService('Players').LocalPlayer
-local EggIslandSpawns = game.Workspace.Easter['EASTER ISLAND EGG SPAWNS']:GetChildren()
-local EggSpawns = game.Workspace.Map['EGG_SPAWNS']:GetChildren()
+	local Plr = game:GetService('Players').LocalPlayer
+	local EggIslandSpawns = game.Workspace.Easter['EASTER ISLAND EGG SPAWNS']:GetChildren()
+	local EggSpawns = game.Workspace.Map['EGG_SPAWNS']:GetChildren()
 
--- Layouts
+	-- Layouts
 
-local firstLayoutToLoad = "Layout1"
-local secondLayoutToLoad = "Layout2"
-local rebirthAmount = game:GetService("Players").LocalPlayer.Rebirths
-local rebirthAmountValue = game:GetService("Players").LocalPlayer.Rebirths.Value
+	local firstLayoutToLoad = "Layout1"
+	local secondLayoutToLoad = "Layout2"
+	local rebirthAmount = game:GetService("Players").LocalPlayer.Rebirths
+	local rebirthAmountValue = game:GetService("Players").LocalPlayer.Rebirths.Value
 
--- Delays
+	-- Delays
 
-local waitsplittime = .75
-local loadAgainTime = .3
-local minrTime = 0
+	local waitsplittime = .75
+	local loadAgainTime = .3
+	local minrTime = 0
 
-local remoteDelay = 0.001
-local pulseDelay = 0.001
+	local remoteDelay = 0.001
+	local pulseDelay = 0.001
 
-local crateTpDelay = 1
+	local crateTpDelay = 1
 
--- Misc Variables
+	-- Misc Variables
 
-local boxToOpen = "BOMBBBB"
-local rpFurnaceString = "Basic Furnace"
-local lifeToStop = "100000000000"
-local conveyorSpeed = 1
-local playersPrevLocation = "234283492389423004982340823890489"
+	local boxToOpen = "BOMBBBB"
+	local rpFurnaceString = "Basic Furnace"
+	local lifeToStop = "100000000000"
+	local conveyorSpeed = 1
+	local playersPrevLocation = "234283492389423004982340823890489"
 
---Functions
+	--Functions
 
--- Webhooks
+	-- Webhooks
 
-if syn then request = syn.request end
+	if syn then request = syn.request end
 
-game:GetService("Players").LocalPlayer.PlayerGui.GUI.Notifications.ChildAdded:Connect(function(v)
-	if v.Name == "ItemTemplate" or "ItemTemplateMini" and v:FindFirstChild("Title") and v:FindFirstChild("Tier") and v:FindFirstChild("Icon") then
-		if RebornTracker == true and (v.Tier.Text == "Reborn" or v.Tier.Text == "Adv. Reborn" or v.Tier.Text == "Shiny Reborn" or v.Tier.Text == "Limited Shiny") then
-			rebirthAmountValue = game:GetService("Players").LocalPlayer.Rebirths.Value
-			local ImageId = v.Icon.Image
-		if string.find(ImageId,"rbxasset") then
-		   ImageId = string.split(tostring(v.Icon.Image),"//")[2]
-		end
-		local ImageData = game:GetService("HttpService"):JSONDecode(request({Url="https://thumbnails.roblox.com/v1/assets?assetIds="..tonumber(ImageId).."&returnPolicy=PlaceHolder&size=512x512&format=Png&isCircular=false"}).Body)
-		local ImageLink = ImageData.data[1]["imageUrl"]
-		local Data = {["embeds"]= {{
-			["title"] = "**New Reborn**",
-			["fields"] = {
-				{
-					["name"] = "**Item**",
-					["value"] =  tostring("```\n"..v.Title.Text.."```"),
-					["inline"] = true
-				},
-				{
-					["name"] = ("**Tier**"),
-					["value"] =  tostring("```\n"..v.Tier.Text.."```"),
-					["inline"] = true
-				},
-				{
-					["name"] = ("**Life**"),
-					["value"] =  tostring("```\n"..rebirthAmountValue.."```"),
-					["inline"] = true
-				},
-			},
-		["color"] = tonumber("0x"..tostring(string.split((string.format("#%02X%02X%02X", v.BackgroundColor3.R * 0xFF,v.BackgroundColor3.G * 0xFF, v.BackgroundColor3.B * 0xFF)),"#")[2])),
-		["footer"] = {["text"] = "Jasifryx Item Tracker | "..os.date()},
-		["thumbnail"] = {["url"]=tostring(ImageLink)}
-		}}
-	}
-		request({Url = "https://discord.com/api/webhooks/1097027630290702416/WZOblbBSGTxJqgR5nrNtCyfX4nRwST0zgzBw9ArMjk7bIC05FwmAOwqvLo3K6zrrNfbP".."?wait=true", Body =  game:GetService("HttpService"):JSONEncode(Data), Method = "POST", Headers = {["content-type"] = "application/json"}})
-		end
-
-		if ShinyTracker == true and (v.Tier.Text == "Shiny Reborn" or v.Tier.Text == "Limited Shiny") then
-			rebirthAmountValue = game:GetService("Players").LocalPlayer.Rebirths.Value
-			local ImageId = v.Icon.Image
+	game:GetService("Players").LocalPlayer.PlayerGui.GUI.Notifications.ChildAdded:Connect(function(v)
+		if v.Name == "ItemTemplate" or "ItemTemplateMini" and v:FindFirstChild("Title") and v:FindFirstChild("Tier") and v:FindFirstChild("Icon") then
+			if RebornTracker == true and (v.Tier.Text == "Reborn" or v.Tier.Text == "Adv. Reborn" or v.Tier.Text == "Shiny Reborn" or v.Tier.Text == "Limited Shiny") then
+				rebirthAmountValue = game:GetService("Players").LocalPlayer.Rebirths.Value
+				local ImageId = v.Icon.Image
 			if string.find(ImageId,"rbxasset") then
-				ImageId = string.split(tostring(v.Icon.Image),"//")[2]
+			ImageId = string.split(tostring(v.Icon.Image),"//")[2]
 			end
 			local ImageData = game:GetService("HttpService"):JSONDecode(request({Url="https://thumbnails.roblox.com/v1/assets?assetIds="..tonumber(ImageId).."&returnPolicy=PlaceHolder&size=512x512&format=Png&isCircular=false"}).Body)
 			local ImageLink = ImageData.data[1]["imageUrl"]
-			local Data = {
-				["content"] = "<@1142>",
-				["embeds"] = {{
-					["title"] = "**New Shiny**",
-					["fields"] = {
-						{
-							["name"] = "**Item**",
-							["value"] =  tostring("```\n"..v.Title.Text.."```"),
-							["inline"] = true
-						},
-						{
-							["name"] = ("**Tier**"),
-							["value"] =  tostring("```\n"..v.Tier.Text.."```"),
-							["inline"] = true
-						},
-						{
-							["name"] = ("**Life**"),
-							["value"] =  tostring("```\n"..rebirthAmountValue.."```"),
-							["inline"] = true
-						},
+			local Data = {["embeds"]= {{
+				["title"] = "**New Reborn**",
+				["fields"] = {
+					{
+						["name"] = "**Item**",
+						["value"] =  tostring("```\n"..v.Title.Text.."```"),
+						["inline"] = true
 					},
-					["color"] = tonumber("0x"..tostring(string.split((string.format("#%02X%02X%02X", v.BackgroundColor3.R * 0xFF,v.BackgroundColor3.G * 0xFF, v.BackgroundColor3.B * 0xFF)),"#")[2])),
-					["footer"] = {["text"] = "Jasifryx Item Tracker | "..os.date()},
-					["thumbnail"] = {["url"]=tostring(ImageLink)}
-				}}
-			}
-			request({
-				Url = "https://discord.com/api/webhooks/998689710006354010/mFEQQlRDI2JO1UAKqYB2RMkYNRyGk0fT0i8FW7FIWXcqqB6rCtOUezllsGpaAEzTja9n".."?wait=true",
-				Body =  game:GetService("HttpService"):JSONEncode(Data),
-				Method = "POST",
-				Headers = {
-					["content-type"] = "application/json"
+					{
+						["name"] = ("**Tier**"),
+						["value"] =  tostring("```\n"..v.Tier.Text.."```"),
+						["inline"] = true
+					},
+					{
+						["name"] = ("**Life**"),
+						["value"] =  tostring("```\n"..rebirthAmountValue.."```"),
+						["inline"] = true
+					},
+				},
+			["color"] = tonumber("0x"..tostring(string.split((string.format("#%02X%02X%02X", v.BackgroundColor3.R * 0xFF,v.BackgroundColor3.G * 0xFF, v.BackgroundColor3.B * 0xFF)),"#")[2])),
+			["footer"] = {["text"] = "Jasifryx Item Tracker | "..os.date()},
+			["thumbnail"] = {["url"]=tostring(ImageLink)}
+			}}
+		}
+			request({Url = "https://discord.com/api/webhooks/1097027630290702416/WZOblbBSGTxJqgR5nrNtCyfX4nRwST0zgzBw9ArMjk7bIC05FwmAOwqvLo3K6zrrNfbP".."?wait=true", Body =  game:GetService("HttpService"):JSONEncode(Data), Method = "POST", Headers = {["content-type"] = "application/json"}})
+			end
+
+			if ShinyTracker == true and (v.Tier.Text == "Shiny Reborn" or v.Tier.Text == "Limited Shiny") then
+				rebirthAmountValue = game:GetService("Players").LocalPlayer.Rebirths.Value
+				local ImageId = v.Icon.Image
+				if string.find(ImageId,"rbxasset") then
+					ImageId = string.split(tostring(v.Icon.Image),"//")[2]
+				end
+				local ImageData = game:GetService("HttpService"):JSONDecode(request({Url="https://thumbnails.roblox.com/v1/assets?assetIds="..tonumber(ImageId).."&returnPolicy=PlaceHolder&size=512x512&format=Png&isCircular=false"}).Body)
+				local ImageLink = ImageData.data[1]["imageUrl"]
+				local Data = {
+					["content"] = "<@1142>",
+					["embeds"] = {{
+						["title"] = "**New Shiny**",
+						["fields"] = {
+							{
+								["name"] = "**Item**",
+								["value"] =  tostring("```\n"..v.Title.Text.."```"),
+								["inline"] = true
+							},
+							{
+								["name"] = ("**Tier**"),
+								["value"] =  tostring("```\n"..v.Tier.Text.."```"),
+								["inline"] = true
+							},
+							{
+								["name"] = ("**Life**"),
+								["value"] =  tostring("```\n"..rebirthAmountValue.."```"),
+								["inline"] = true
+							},
+						},
+						["color"] = tonumber("0x"..tostring(string.split((string.format("#%02X%02X%02X", v.BackgroundColor3.R * 0xFF,v.BackgroundColor3.G * 0xFF, v.BackgroundColor3.B * 0xFF)),"#")[2])),
+						["footer"] = {["text"] = "Jasifryx Item Tracker | "..os.date()},
+						["thumbnail"] = {["url"]=tostring(ImageLink)}
+					}}
 				}
-			})
-		end
+				request({
+					Url = "https://discord.com/api/webhooks/998689710006354010/mFEQQlRDI2JO1UAKqYB2RMkYNRyGk0fT0i8FW7FIWXcqqB6rCtOUezllsGpaAEzTja9n".."?wait=true",
+					Body =  game:GetService("HttpService"):JSONEncode(Data),
+					Method = "POST",
+					Headers = {
+						["content-type"] = "application/json"
+					}
+				})
+			end
 
-		if DecimalTracker == true and (v.Icon.Image == "rbxassetid://4580108192" or v.Icon.Image == "rbxassetid://4657508869" or v.Icon.Image == "rbxassetid://4993136413" or v.Icon.Image == "rbxassetid://4400530325" or v.Icon.Image == "rbxassetid://4506762215" or v.Icon.Image == "rbxassetid://5258149276" or v.Icon.Image == "rbxassetid://6797983431" or v.Icon.Image == "rbxassetid://4769428868" or v.Icon.Image == "rbxassetid://4871980947" or v.Icon.Image == "rbxassetid://4835901686" or v.Icon.Image == "rbxassetid://5494226098") then
-			rebirthAmountValue = game:GetService("Players").LocalPlayer.Rebirths.Value
-			local ImageId = v.Icon.Image
-		if string.find(ImageId,"rbxasset") then
-		   ImageId = string.split(tostring(v.Icon.Image),"//")[2]
-		end
-		local ImageData = game:GetService("HttpService"):JSONDecode(request({Url="https://thumbnails.roblox.com/v1/assets?assetIds="..tonumber(ImageId).."&returnPolicy=PlaceHolder&size=512x512&format=Png&isCircular=false"}).Body)
-		local ImageLink = ImageData.data[1]["imageUrl"]
-		local Data = {["embeds"]= {{
-			["title"] = "**New Decimal**",
-			["fields"] = {
-				{
-					["name"] = "**Item**",
-					["value"] =  tostring("```\n"..v.Title.Text.."```"),
-					["inline"] = true
+			if DecimalTracker == true and (v.Icon.Image == "rbxassetid://4580108192" or v.Icon.Image == "rbxassetid://4657508869" or v.Icon.Image == "rbxassetid://4993136413" or v.Icon.Image == "rbxassetid://4400530325" or v.Icon.Image == "rbxassetid://4506762215" or v.Icon.Image == "rbxassetid://5258149276" or v.Icon.Image == "rbxassetid://6797983431" or v.Icon.Image == "rbxassetid://4769428868" or v.Icon.Image == "rbxassetid://4871980947" or v.Icon.Image == "rbxassetid://4835901686" or v.Icon.Image == "rbxassetid://5494226098") then
+				rebirthAmountValue = game:GetService("Players").LocalPlayer.Rebirths.Value
+				local ImageId = v.Icon.Image
+			if string.find(ImageId,"rbxasset") then
+			ImageId = string.split(tostring(v.Icon.Image),"//")[2]
+			end
+			local ImageData = game:GetService("HttpService"):JSONDecode(request({Url="https://thumbnails.roblox.com/v1/assets?assetIds="..tonumber(ImageId).."&returnPolicy=PlaceHolder&size=512x512&format=Png&isCircular=false"}).Body)
+			local ImageLink = ImageData.data[1]["imageUrl"]
+			local Data = {["embeds"]= {{
+				["title"] = "**New Decimal**",
+				["fields"] = {
+					{
+						["name"] = "**Item**",
+						["value"] =  tostring("```\n"..v.Title.Text.."```"),
+						["inline"] = true
+					},
+					{
+						["name"] = ("**Tier**"),
+						["value"] =  tostring("```\n"..v.Tier.Text.."```"),
+						["inline"] = true
+					},
+					{
+						["name"] = ("**Life**"),
+						["value"] =  tostring("```\n"..rebirthAmountValue.."```"),
+						["inline"] = true
+					},
 				},
-				{
-					["name"] = ("**Tier**"),
-					["value"] =  tostring("```\n"..v.Tier.Text.."```"),
-					["inline"] = true
-				},
-				{
-					["name"] = ("**Life**"),
-					["value"] =  tostring("```\n"..rebirthAmountValue.."```"),
-					["inline"] = true
-				},
-			},
-		["color"] = tonumber("0x"..tostring(string.split((string.format("#%02X%02X%02X", v.BackgroundColor3.R * 0xFF,v.BackgroundColor3.G * 0xFF, v.BackgroundColor3.B * 0xFF)),"#")[2])),
-		["footer"] = {["text"] = "Jasifryx Item Tracker | "..os.date()},
-		["thumbnail"] = {["url"]=tostring(ImageLink)}
-		}}
-	}
-		request({Url = "https://discord.com/api/webhooks/998690105478877214/YOurjv5MWjwCkIFOvk4Dbjk9FSLk8QQpb6oLI2EC90OrCgnJBM-41KlyzV0jhE8KoAW3".."?wait=true", Body =  game:GetService("HttpService"):JSONEncode(Data), Method = "POST", Headers = {["content-type"] = "application/json"}})
-		end
+			["color"] = tonumber("0x"..tostring(string.split((string.format("#%02X%02X%02X", v.BackgroundColor3.R * 0xFF,v.BackgroundColor3.G * 0xFF, v.BackgroundColor3.B * 0xFF)),"#")[2])),
+			["footer"] = {["text"] = "Jasifryx Item Tracker | "..os.date()},
+			["thumbnail"] = {["url"]=tostring(ImageLink)}
+			}}
+		}
+			request({Url = "https://discord.com/api/webhooks/998690105478877214/YOurjv5MWjwCkIFOvk4Dbjk9FSLk8QQpb6oLI2EC90OrCgnJBM-41KlyzV0jhE8KoAW3".."?wait=true", Body =  game:GetService("HttpService"):JSONEncode(Data), Method = "POST", Headers = {["content-type"] = "application/json"}})
+			end
 
+		end
+	end)
+
+	game:GetService("Players").LocalPlayer.PlayerGui.GUI.Notifications.ChildAdded:Connect(function(v)
+			if v.Name == "ItemTemplate" or "ItemTemplateMini" and v:FindFirstChild("Title") and v:FindFirstChild("Tier") and v:FindFirstChild("Icon") then
+				if kickAtDecShiny == true and (v.Title.Text == "⭐ Eldritch Stellarite Mine ⭐" or v.Title.Text == "⭐ Swag Funky Town ⭐" or v.Title.Text == "⭐ Swag Meatball Sandwich ⭐" or v.Title.Text == "⭐️ Ghost Ore Memer ⭐️" or v.Title.Text == "⭐ Ascended King Gold Mine ⭐" or v.Title.Text == "⭐ Corrupt Soul Blossom ⭐" or v.Title.Text == "⭐ Ascended King Gold Mine ⭐" or v.Title.Text == "⭐ Unripe Grand Banana ⭐" or v.Title.Text == "⭐ Retro Turtle Dignifier ⭐" or v.Title.Text == "	⭐ Stargazed Interstellar Conqueror ⭐" or v.Title.Text == "⭐ Cherry Ooftopian Refiner ⭐" or v.Title.Text == "⭐ Endothermic Australis Fornacem ⭐") then
+				player:Kick("GOT DECIMAL SHINY RIP ACCOUNT")
+			end
+		end
+	end)
+
+	-- Layout Stealer
+
+	local FetchItemModule = require(game:GetService("ReplicatedStorage").FetchItem)
+	local TycoonBase = game.Players.LocalPlayer.PlayerTycoon.Value.Base
+	local LayoutPlayerSelected = "CrazifiedJK"
+	local LayoutCopierSelected = 1
+
+	function ShopItems()
+		for i,v in pairs(getgc(true)) do
+			if type(v) == "table" and rawget(v,"Miscs") then
+				return v["All"]
+			end
+		end
 	end
- end)
-
-game:GetService("Players").LocalPlayer.PlayerGui.GUI.Notifications.ChildAdded:Connect(function(v)
-		if v.Name == "ItemTemplate" or "ItemTemplateMini" and v:FindFirstChild("Title") and v:FindFirstChild("Tier") and v:FindFirstChild("Icon") then
-			if kickAtDecShiny == true and (v.Title.Text == "⭐ Eldritch Stellarite Mine ⭐" or v.Title.Text == "⭐ Swag Funky Town ⭐" or v.Title.Text == "⭐ Swag Meatball Sandwich ⭐" or v.Title.Text == "⭐️ Ghost Ore Memer ⭐️" or v.Title.Text == "⭐ Ascended King Gold Mine ⭐" or v.Title.Text == "⭐ Corrupt Soul Blossom ⭐" or v.Title.Text == "⭐ Ascended King Gold Mine ⭐" or v.Title.Text == "⭐ Unripe Grand Banana ⭐" or v.Title.Text == "⭐ Retro Turtle Dignifier ⭐" or v.Title.Text == "	⭐ Stargazed Interstellar Conqueror ⭐" or v.Title.Text == "⭐ Cherry Ooftopian Refiner ⭐" or v.Title.Text == "⭐ Endothermic Australis Fornacem ⭐") then
-			player:Kick("GOT DECIMAL SHINY RIP ACCOUNT")
+	function HasItem(Needed)
+		if game:GetService("ReplicatedStorage").HasItem:InvokeServer(Needed) > 0 then
+			return true
 		end
+		return false
 	end
-end)
+	function IsShopItem(Needed)
+		for i,v in pairs(ShopItems()) do
+			if tonumber(v.ItemId.Value) == tonumber(Needed) then
+				return true
+			end
+		end
+		return false
+	end
 
- -- Layout Stealer
-
- local FetchItemModule = require(game:GetService("ReplicatedStorage").FetchItem)
- local TycoonBase = game.Players.LocalPlayer.PlayerTycoon.Value.Base
- local LayoutPlayerSelected = "CrazifiedJK"
- local LayoutCopierSelected = 1
-
- function ShopItems()
-    for i,v in pairs(getgc(true)) do
-        if type(v) == "table" and rawget(v,"Miscs") then
-            return v["All"]
-        end
-    end
- end
- function HasItem(Needed)
-    if game:GetService("ReplicatedStorage").HasItem:InvokeServer(Needed) > 0 then
-        return true
-    end
-    return false
- end
- function IsShopItem(Needed)
-    for i,v in pairs(ShopItems()) do
-        if tonumber(v.ItemId.Value) == tonumber(Needed) then
-            return true
-        end
-    end
-    return false
- end
-
- function buildLoadout()
-	for i,v in pairs(game:GetService("HttpService"):JSONDecode(game:GetService("Players")[LayoutPlayerSelected].Layouts["Layout"..LayoutCopierSelected].Value)) do
-		task.spawn(function()
-			if HasItem(v["ItemId"]) == true then
-				local TopLeft = TycoonBase.CFrame * CFrame.new(Vector3.new(TycoonBase.Size.X/2, 0, TycoonBase.Size.Z/2))
-				local Position = TopLeft * Vector3.new(tonumber(v.Position[1]), tonumber(v.Position[2]), tonumber(v.Position[3]))
-				local Rotation = Vector3.new(tonumber(v.Position[4]),tonumber(v.Position[5]),tonumber(v.Position[6]))
-				local NewCf = CFrame.new(Position, Position + (Rotation * 5))
-				game:GetService("ReplicatedStorage").PlaceItem:InvokeServer(FetchItemModule.Get(nil,v["ItemId"]).Name,NewCf,{TycoonBase})
-				task.wait()
-			elseif HasItem(v["ItemId"]) == false and IsShopItem(v["ItemId"]) == true and game:GetService("Players").LocalPlayer.PlayerGui.GUI.Money.Value >= game:GetService("ReplicatedStorage").Items[FetchItemModule.Get(nil,v["ItemId"]).Name].Cost.Value then
-				game:GetService("ReplicatedStorage").BuyItem:InvokeServer(FetchItemModule.Get(nil,v["ItemId"]).Name,1)
-				task.wait()
-				local TopLeft = TycoonBase.CFrame * CFrame.new(Vector3.new(TycoonBase.Size.X/2, 0, TycoonBase.Size.Z/2))
-				local Position = TopLeft * Vector3.new(tonumber(v.Position[1]), tonumber(v.Position[2]), tonumber(v.Position[3]))
-				local Rotation = Vector3.new(tonumber(v.Position[4]),tonumber(v.Position[5]),tonumber(v.Position[6]))
-				local NewCf = CFrame.new(Position, Position + (Rotation * 5))
-				game:GetService("ReplicatedStorage").PlaceItem:InvokeServer(FetchItemModule.Get(nil,v["ItemId"]).Name,NewCf,{TycoonBase})
-				task.wait()
-			else
-				if IsShopItem(v["ItemId"]) == true then
-					print("Cant Afford Item, "..FetchItemModule.Get(nil,v["ItemId"]).Name)
+	function buildLoadout()
+		for i,v in pairs(game:GetService("HttpService"):JSONDecode(game:GetService("Players")[LayoutPlayerSelected].Layouts["Layout"..LayoutCopierSelected].Value)) do
+			task.spawn(function()
+				if HasItem(v["ItemId"]) == true then
+					local TopLeft = TycoonBase.CFrame * CFrame.new(Vector3.new(TycoonBase.Size.X/2, 0, TycoonBase.Size.Z/2))
+					local Position = TopLeft * Vector3.new(tonumber(v.Position[1]), tonumber(v.Position[2]), tonumber(v.Position[3]))
+					local Rotation = Vector3.new(tonumber(v.Position[4]),tonumber(v.Position[5]),tonumber(v.Position[6]))
+					local NewCf = CFrame.new(Position, Position + (Rotation * 5))
+					game:GetService("ReplicatedStorage").PlaceItem:InvokeServer(FetchItemModule.Get(nil,v["ItemId"]).Name,NewCf,{TycoonBase})
+					task.wait()
+				elseif HasItem(v["ItemId"]) == false and IsShopItem(v["ItemId"]) == true and game:GetService("Players").LocalPlayer.PlayerGui.GUI.Money.Value >= game:GetService("ReplicatedStorage").Items[FetchItemModule.Get(nil,v["ItemId"]).Name].Cost.Value then
+					game:GetService("ReplicatedStorage").BuyItem:InvokeServer(FetchItemModule.Get(nil,v["ItemId"]).Name,1)
+					task.wait()
+					local TopLeft = TycoonBase.CFrame * CFrame.new(Vector3.new(TycoonBase.Size.X/2, 0, TycoonBase.Size.Z/2))
+					local Position = TopLeft * Vector3.new(tonumber(v.Position[1]), tonumber(v.Position[2]), tonumber(v.Position[3]))
+					local Rotation = Vector3.new(tonumber(v.Position[4]),tonumber(v.Position[5]),tonumber(v.Position[6]))
+					local NewCf = CFrame.new(Position, Position + (Rotation * 5))
+					game:GetService("ReplicatedStorage").PlaceItem:InvokeServer(FetchItemModule.Get(nil,v["ItemId"]).Name,NewCf,{TycoonBase})
+					task.wait()
 				else
-					print("Cant Find, "..FetchItemModule.Get(nil,v["ItemId"]).Name)
+					if IsShopItem(v["ItemId"]) == true then
+						print("Cant Afford Item, "..FetchItemModule.Get(nil,v["ItemId"]).Name)
+					else
+						print("Cant Find, "..FetchItemModule.Get(nil,v["ItemId"]).Name)
+					end
+				end
+			end)
+		end
+	end
+
+	-- Misc
+
+	function openBoxes()
+		while OpenBoxes == true do
+				game:GetService("ReplicatedStorage").MysteryBox:InvokeServer(boxToOpen)
+			wait(4.25)
+		end
+	end
+
+	function oresToFurnace()
+		while OreToFurnace do
+			local rpFurnace = playersBase[tostring(rpFurnaceString)] and playersBase[tostring(rpFurnaceString)].Model.Lava
+			if rpFurnace then
+				for i, v in pairs(BaseOres:GetChildren()) do
+					v.CFrame = rpFurnace.CFrame
 				end
 			end
-		end)
+			wait()
+		end
 	end
- end
 
--- Misc
+	function buyBaz()
+		while AutoBaz do
+			game:GetService("ReplicatedStorage").BuyItem:InvokeServer("Basic Iron Mine",99)
+		wait(0.01)
+		end
+	end
 
-function openBoxes()
-    while OpenBoxes == true do
-            game:GetService("ReplicatedStorage").MysteryBox:InvokeServer(boxToOpen)
-        wait(4.25)
-    end
-end
+	-- Ores
 
-function oresToFurnace()
-	while OreToFurnace do
-		local rpFurnace = playersBase[tostring(rpFurnaceString)] and playersBase[tostring(rpFurnaceString)].Model.Lava
-		if rpFurnace then
+	function freezeOres()
+		if FreezeOres == false then
 			for i, v in pairs(BaseOres:GetChildren()) do
-				v.CFrame = rpFurnace.CFrame
+				v.Anchored = false
 			end
 		end
-		wait()
+
+		while FreezeOres == true do
+			for i, v in pairs(BaseOres:GetChildren()) do
+				v.Anchored = FreezeOres
+			end
+			wait(0.00000001)
+		end
 	end
-end
 
-function buyBaz()
-	while AutoBaz do
-		game:GetService("ReplicatedStorage").BuyItem:InvokeServer("Basic Iron Mine",99)
-	wait(0.01)
+	function rotOres()
+		while RotOres do
+			for i, v in pairs(BaseOres:GetChildren()) do
+				v.Orientation = Vector3.new(0, 0, 0)
+				v.Rotation = Vector3.new(0, 0, 0)
+				v.CFrame = CFrame.new(v.Position) * CFrame.Angles(0,0,0)
+				v.RotVelocity = Vector3.new(0, 0, 0)
+			end
+			wait()
+		end
 	end
-end
 
--- Ores
-
-function freezeOres()
-    if FreezeOres == false then
-        for i, v in pairs(BaseOres:GetChildren()) do
-            v.Anchored = false
-        end
-    end
-
-    while FreezeOres == true do
-        for i, v in pairs(BaseOres:GetChildren()) do
-            v.Anchored = FreezeOres
-        end
-        wait(0.00000001)
-    end
-end
-
-function rotOres()
-	while RotOres do
+	function tpOres()
+		local playerPos = player.Character.HumanoidRootPart.CFrame
 		for i, v in pairs(BaseOres:GetChildren()) do
-			v.Orientation = Vector3.new(0, 0, 0)
-			v.Rotation = Vector3.new(0, 0, 0)
-			v.CFrame = CFrame.new(v.Position) * CFrame.Angles(0,0,0)
-			v.RotVelocity = Vector3.new(0, 0, 0)
+			v.CFrame = playerPos
 		end
-		wait()
 	end
-end
 
-function tpOres()
-    local playerPos = player.Character.HumanoidRootPart.CFrame
-    for i, v in pairs(BaseOres:GetChildren()) do
-        v.CFrame = playerPos
-    end
-end
-
-function destroyOres()
-    for i, v in pairs(BaseOres:GetChildren()) do
-        v.CFrame = playersBasePos.CFrame
-    end
-end
-
--- Remote Spam
-
-function autoRemote()
-	while AutoRemote == true do
-		game:GetService("ReplicatedStorage").RemoteDrop:FireServer()
-		wait(remoteDelay)
-	end
-end
-
-function autoPulse()
-	while AutoPulse == true do
-		game:GetService("ReplicatedStorage").Pulse:FireServer()
-		wait(pulseDelay)
-	end
-end
-    
--- Auto Reborn
-
-function autoReborn()
-    while AutoReborn == true do
-        if game:GetService("Players").LocalPlayer.PlayerGui.GUI.Money.Value >= MoneyLibary.RebornPrice(game:GetService("Players").LocalPlayer) and (game:GetService("Players").LocalPlayer.PlayerTycoon.Value:GetPivot().p - game.Players.LocalPlayer.Character:GetPivot().p).Magnitude <= 150 then
-            wait(minrTime)
-			game:GetService("ReplicatedStorage").Rebirth:InvokeServer(26)
-        end
-        wait(.0000001)
-    end
-end
-
-function lifeKickFunction()
-	while kickAtLife == true do
-		rebirthAmountValue = game:GetService("Players").LocalPlayer.Rebirths.Value
-		if tonumber(lifeToStop) and tonumber(lifeToStop) <= rebirthAmountValue then
-			player:Kick("life wanted hit")
+	function destroyOres()
+		for i, v in pairs(BaseOres:GetChildren()) do
+			v.CFrame = playersBasePos.CFrame
 		end
-	wait(3)
 	end
-end
 
-function autoLayout()
-	if AutoLayout == true then
-		game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",firstLayoutToLoad)
-		wait(waitsplittime)
-		game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",secondLayoutToLoad)
+	-- Remote Spam
+
+	function autoRemote()
+		while AutoRemote == true do
+			game:GetService("ReplicatedStorage").RemoteDrop:FireServer()
+			wait(remoteDelay)
+		end
 	end
-end
 
-game:GetService("Players").LocalPlayer.Rebirths:GetPropertyChangedSignal("Value"):Connect(function()
-	if pulseWithReborn == true then
-		wait(1)
-		game:GetService("ReplicatedStorage").Pulse:FireServer()
+	function autoPulse()
+		while AutoPulse == true do
+			game:GetService("ReplicatedStorage").Pulse:FireServer()
+			wait(pulseDelay)
+		end
 	end
-	wait(loadAgainTime)
-	pcall(autoLayout)
-end)
+		
+	-- Auto Reborn
 
--- Base Tweaks
-
-function convSpeed()
-    while ConvSpeed == true do
-        local adjustSpeedValue = playersBase:FindFirstChild("AdjustSpeed")
-        adjustSpeedValue.Value = conveyorSpeed
-        wait(0.000001)
-    end    
-end
-
-function openCraftsman()
-	local gui = game.Players.LocalPlayer.PlayerGui:WaitForChild("GUI")
-	if gui.Craftsman.Visible == false then
-	gui.Craftsman.Visible = true
-	local lock = gui.Craftsman:getDescendants()
-	for i=1,#lock do
-	if lock[i].Name == "LockedItem" then
-	lock[i].Visible = false
+	function autoReborn()
+		while AutoReborn == true do
+			if game:GetService("Players").LocalPlayer.PlayerGui.GUI.Money.Value >= MoneyLibary.RebornPrice(game:GetService("Players").LocalPlayer) and (game:GetService("Players").LocalPlayer.PlayerTycoon.Value:GetPivot().p - game.Players.LocalPlayer.Character:GetPivot().p).Magnitude <= 150 then
+				wait(minrTime)
+				game:GetService("ReplicatedStorage").Rebirth:InvokeServer(26)
+			end
+			wait(.0000001)
+		end
 	end
+
+	function lifeKickFunction()
+		while kickAtLife == true do
+			rebirthAmountValue = game:GetService("Players").LocalPlayer.Rebirths.Value
+			if tonumber(lifeToStop) and tonumber(lifeToStop) <= rebirthAmountValue then
+				player:Kick("life wanted hit")
+			end
+		wait(3)
+		end
 	end
-	else
-	gui.Craftsman.Visible = false
+
+	function autoLayout()
+		if AutoLayout == true then
+			game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",firstLayoutToLoad)
+			wait(waitsplittime)
+			game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",secondLayoutToLoad)
+		end
 	end
-end
 
--- Crate & Egg TP Functions
+	game:GetService("Players").LocalPlayer.Rebirths:GetPropertyChangedSignal("Value"):Connect(function()
+		if pulseWithReborn == true then
+			wait(1)
+			game:GetService("ReplicatedStorage").Pulse:FireServer()
+		end
+		wait(loadAgainTime)
+		pcall(autoLayout)
+	end)
 
-function crateTP()
-    if CrateTP == true then
-        while true do
-            local boxes = game.workspace.Boxes:GetChildren()
-            if #boxes == 0 then
-                game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(playersBasePos.Position))
-                break
-            else
-                for _, box in ipairs(boxes) do
-                    wait(crateTpDelay)
-                    game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(box.CFrame)
-                end
-            end
-        end
-    end
-end
+	-- Base Tweaks
 
-game.workspace.Boxes.ChildAdded:Connect(function(child)
-    if CrateTP == true then
-        game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(child.CFrame)
-        wait(crateTpDelay)
-        game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(playersBasePos.Position) + Vector3.new(0, 3, 0))
-    end
-end)
+	function convSpeed()
+		while ConvSpeed == true do
+			local adjustSpeedValue = playersBase:FindFirstChild("AdjustSpeed")
+			adjustSpeedValue.Value = conveyorSpeed
+			wait(0.000001)
+		end    
+	end
 
-game.workspace.Boxes.ChildRemoved:Connect(function(child)
-    if CrateTP == true then
-        game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(playersBasePos.Position) + Vector3.new(0, 3, 0))
-    end
-end)
+	function openCraftsman()
+		local gui = game.Players.LocalPlayer.PlayerGui:WaitForChild("GUI")
+		if gui.Craftsman.Visible == false then
+		gui.Craftsman.Visible = true
+		local lock = gui.Craftsman:getDescendants()
+		for i=1,#lock do
+		if lock[i].Name == "LockedItem" then
+		lock[i].Visible = false
+		end
+		end
+		else
+		gui.Craftsman.Visible = false
+		end
+	end
 
-function eggTP()
-	while EggTP == true do
-		for i, v in pairs(EggSpawns) do
-			if not EggTP then break end
-			for i, PreppedEgg in pairs(v:GetChildren()) do
-				local ProxPrompt = PreppedEgg:FindFirstChildOfClass('ProximityPrompt')
-				if not ProxPrompt then return end
-				Plr.Character:PivotTo(PreppedEgg.CFrame)
-				repeat
-					task.wait()
-					fireproximityprompt(ProxPrompt)
-				until PreppedEgg.Parent ~= v
-				if not EggTP then
+	-- Crate & Egg TP Functions
+
+	function crateTP()
+		if CrateTP == true then
+			while true do
+				local boxes = game.workspace.Boxes:GetChildren()
+				if #boxes == 0 then
+					game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(playersBasePos.Position))
 					break
+				else
+					for _, box in ipairs(boxes) do
+						wait(crateTpDelay)
+						game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(box.CFrame)
+					end
 				end
 			end
 		end
-		
-		for i, v in pairs(EggIslandSpawns) do
-			for i, PreppedEgg in pairs(v:GetChildren()) do
-				local ProxPrompt = PreppedEgg:FindFirstChildOfClass('ProximityPrompt')
-				if not ProxPrompt then return end
-				Plr.Character:PivotTo(PreppedEgg.CFrame)
-				repeat
-					task.wait()
-					fireproximityprompt(ProxPrompt)
+	end
+
+	game.workspace.Boxes.ChildAdded:Connect(function(child)
+		if CrateTP == true then
+			game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(child.CFrame)
+			wait(crateTpDelay)
+			game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(playersBasePos.Position) + Vector3.new(0, 3, 0))
+		end
+	end)
+
+	game.workspace.Boxes.ChildRemoved:Connect(function(child)
+		if CrateTP == true then
+			game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(playersBasePos.Position) + Vector3.new(0, 3, 0))
+		end
+	end)
+
+	function eggTP()
+		while EggTP == true do
+			for i, v in pairs(EggSpawns) do
+				if not EggTP then break end
+				for i, PreppedEgg in pairs(v:GetChildren()) do
+					local ProxPrompt = PreppedEgg:FindFirstChildOfClass('ProximityPrompt')
+					if not ProxPrompt then return end
+					Plr.Character:PivotTo(PreppedEgg.CFrame)
+					repeat
+						task.wait()
+						fireproximityprompt(ProxPrompt)
+					until PreppedEgg.Parent ~= v
 					if not EggTP then
 						break
 					end
-				until PreppedEgg.Parent ~= v
-				if not EggTP then
-					break
 				end
 			end
-		end
-		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(playersBasePos.Position) + Vector3.new(0, 3, 0)
-		local function Egg(egg)
-			if EggTP == true then
-				task.wait()
-				local ProxPrompt = egg:FindFirstChildOfClass('ProximityPrompt')
-				if not ProxPrompt then return end
-				local parent = egg.Parent
-				Plr.Character:PivotTo(egg.CFrame)
-				repeat
+			
+			for i, v in pairs(EggIslandSpawns) do
+				for i, PreppedEgg in pairs(v:GetChildren()) do
+					local ProxPrompt = PreppedEgg:FindFirstChildOfClass('ProximityPrompt')
+					if not ProxPrompt then return end
+					Plr.Character:PivotTo(PreppedEgg.CFrame)
+					repeat
+						task.wait()
+						fireproximityprompt(ProxPrompt)
+						if not EggTP then
+							break
+						end
+					until PreppedEgg.Parent ~= v
+					if not EggTP then
+						break
+					end
+				end
+			end
+			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(playersBasePos.Position) + Vector3.new(0, 3, 0)
+			local function Egg(egg)
+				if EggTP == true then
 					task.wait()
-					fireproximityprompt(ProxPrompt)
-				until egg.Parent ~= parent
-				game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(playersBasePos.Position) + Vector3.new(0, 3, 0)
+					local ProxPrompt = egg:FindFirstChildOfClass('ProximityPrompt')
+					if not ProxPrompt then return end
+					local parent = egg.Parent
+					Plr.Character:PivotTo(egg.CFrame)
+					repeat
+						task.wait()
+						fireproximityprompt(ProxPrompt)
+					until egg.Parent ~= parent
+					game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(playersBasePos.Position) + Vector3.new(0, 3, 0)
+				end
+			end
+			if not EggTP then
+				break
+			end
+
+			for i, v in pairs(EggSpawns) do
+				v.ChildAdded:Connect(Egg)
+			end
+			if not EggTP then
+				break
+			end
+			
+			for i, v in pairs(EggIslandSpawns) do
+				v.ChildAdded:Connect(Egg)
+			end
+			if not EggTP then
+				break
+			end
+			wait(.1)
+			if not EggTP then
+				break
 			end
 		end
-		if not EggTP then
-			break
-		end
-
-		for i, v in pairs(EggSpawns) do
-			v.ChildAdded:Connect(Egg)
-		end
-		if not EggTP then
-			break
-		end
-		
-		for i, v in pairs(EggIslandSpawns) do
-			v.ChildAdded:Connect(Egg)
-		end
-		if not EggTP then
-			break
-		end
-		wait(.1)
-		if not EggTP then
-			break
-		end
 	end
-end
 
--- Crate & Egg TP Function ^
+	-- Crate & Egg TP Function ^
 
---Tabs
+	--Tabs
 
-local AutoRebornTab = Window:MakeTab({
-	Name = "Auto Rebirth",
-	Icon = "rbxassetid://4483345998",
-	PremiumOnly = false
-})
+	local AutoRebornTab = Window:MakeTab({
+		Name = "Auto Rebirth",
+		Icon = "rbxassetid://4483345998",
+		PremiumOnly = false
+	})
 
-local BaseTweaksTab = Window:MakeTab({
-	Name = "Base Tweaks",
-	Icon = "rbxassetid://4483345998",
-	PremiumOnly = false
-})
+	local BaseTweaksTab = Window:MakeTab({
+		Name = "Base Tweaks",
+		Icon = "rbxassetid://4483345998",
+		PremiumOnly = false
+	})
 
-local WebhooksTab = Window:MakeTab({
-	Name = "Webhooks",
-	Icon = "rbxassetid://4483345998",
-	PremiumOnly = false
-})
+	local WebhooksTab = Window:MakeTab({
+		Name = "Webhooks",
+		Icon = "rbxassetid://4483345998",
+		PremiumOnly = false
+	})
 
-local LayoutsTab = Window:MakeTab({
-	Name = "Layouts",
-	Icon = "rbxassetid://4483345998",
-	PremiumOnly = false
-})
+	local LayoutsTab = Window:MakeTab({
+		Name = "Layouts",
+		Icon = "rbxassetid://4483345998",
+		PremiumOnly = false
+	})
 
-local TeleportsTab = Window:MakeTab({
-	Name = "Teleports",
-	Icon = "rbxassetid://4483345998",
-	PremiumOnly = false
-})
+	local TeleportsTab = Window:MakeTab({
+		Name = "Teleports",
+		Icon = "rbxassetid://4483345998",
+		PremiumOnly = false
+	})
 
-local RemoteSpamTab = Window:MakeTab({
-	Name = "Remote Spam",
-	Icon = "rbxassetid://4483345998",
-	PremiumOnly = false
-})
+	local RemoteSpamTab = Window:MakeTab({
+		Name = "Remote Spam",
+		Icon = "rbxassetid://4483345998",
+		PremiumOnly = false
+	})
 
-local VendorsTab = Window:MakeTab({
-	Name = "Vendors",
-	Icon = "rbxassetid://4483345998",
-	PremiumOnly = false
-})
+	local VendorsTab = Window:MakeTab({
+		Name = "Vendors",
+		Icon = "rbxassetid://4483345998",
+		PremiumOnly = false
+	})
 
-local MiscTab = Window:MakeTab({
-	Name = "Miscellaneous",
-	Icon = "rbxassetid://4483345998",
-	PremiumOnly = false
-})
+	local MiscTab = Window:MakeTab({
+		Name = "Miscellaneous",
+		Icon = "rbxassetid://4483345998",
+		PremiumOnly = false
+	})
 
---AutoReborn
+	--AutoReborn
 
-local AutoRebornSection = AutoRebornTab:AddSection({
-	Name = "Auto Rebirth"
-})
+	local AutoRebornSection = AutoRebornTab:AddSection({
+		Name = "Auto Rebirth"
+	})
 
-AutoRebornSection:AddToggle({
-	Name = "Toggle Auto Rebirth",
-	Default = false,
-	Callback = function(Value)
-		AutoReborn = Value
-        autoReborn()
-    end
-})
-
-AutoLayoutSection:AddSlider({
-	Name = "Minimum Rebirth Time",
-	Min = 0,
-	Max = 120,
-	Default = 0,
-	Color = Color3.fromRGB(255,255,255),
-	Increment = 1,
-	ValueName = "Minimum Time",
-	Callback = function(Value)
-		minrTime = Value
-	end    
-})
-
-AutoRebornSection:AddToggle({
-	Name = "Toggle Kick At Life",
-	Default = false,
-	Callback = function(Value)
-		kickAtLife = Value
-        lifeKickFunction()
-    end
-})
-
-AutoRebornSection:AddTextbox({
-	Name = "Life To Kick",
-	Default = "1000000000",
-	TextDisappear = false,
-	Callback = function(Value)
-		lifeToStop = Value
-	end	  
-})
-
-AutoRebornSection:AddToggle({
-	Name = "Toggle Kick When Decimal Shiny",
-	Default = false,
-	Callback = function(Value)
-		kickAtDecShiny = Value
-    end
-})
-
-local AutoLayoutSection = AutoRebornTab:AddSection({
-	Name = "Auto Load"
-})
-
-AutoLayoutSection:AddToggle({
-	Name = "Toggle Auto Load Layouts",
-	Default = false,
-	Callback = function(Value)
-		AutoLayout = Value
-        autoLayout()
-	end    
-})
-
-AutoLayoutSection:AddDropdown({
-	Name = "Select First Layout To Load",
-	Default = "Layout1",
-	Options = {"Layout1", "Layout2", "Layout3"},
-	Callback = function(Value)
-			firstLayoutToLoad = Value
-	end    
-})
-
-AutoLayoutSection:AddDropdown({
-	Name = "Select Second Layout To Load",
-	Default = "Layout2",
-	Options = {"Layout1", "Layout2", "Layout3"},
-	Callback = function(Value)
-			secondLayoutToLoad = Value
-	end    
-})
-
-AutoLayoutSection:AddSlider({
-	Name = "Split Wait Time",
-	Min = 0,
-	Max = 30,
-	Default = .10,
-	Color = Color3.fromRGB(255,255,255),
-	Increment = .05,
-	ValueName = "Split Time",
-	Callback = function(Value)
-		waitsplittime = Value
-	end    
-})
-
-AutoLayoutSection:AddSlider({
-	Name = "Load Again Wait Time",
-	Min = 0.3,
-	Max = 3,
-	Default = .3,
-	Color = Color3.fromRGB(255,255,255),
-	Increment = .1,
-	ValueName = "Wait Time",
-	Callback = function(Value)
-		loadAgainTime = Value
-	end    
-})
-
--- Base Tweaks
-
-local ConveyorSection = BaseTweaksTab:AddSection({
-	Name = "Conveyors"
-})
-
-local OreSection = BaseTweaksTab:AddSection({
-	Name = "Ore Tweaks"
-})
-
-ConveyorSection:AddToggle({
-	Name = "Toggle Conveyor Speed",
-	Default = false,
-	Callback = function(Value)
-		ConvSpeed = Value
-		print(conveyorSpeed)
-		convSpeed()
-	end    
-})
-
-ConveyorSection:AddSlider({
-	Name = "Conveyor Speed Multiplier",
-	Min = 1,
-	Max = 10,
-	Default = 1,
-	Color = Color3.fromRGB(255,255,255),
-	Increment = 1,
-	ValueName = "Speed Multiplier",
-	Callback = function(Value)
-		conveyorSpeed = Value
-	end    
-})
-
-OreSection:AddToggle({
-	Name = "Lock Ore Rotation",
-	Default = false,
-	Callback = function(Value)
-            RotOres = Value
-            rotOres()
-	end    
-})
-
-OreSection:AddToggle({
-	Name = "Freeze Ores",
-	Default = false,
-	Callback = function(Value)
-            FreezeOres = Value
-            freezeOres()
-	end    
-})
-
-OreSection:AddButton({
-	Name = "TP Ores To Player",
-	Callback = function()
-            tpOres()
-  	end    
-})
-
-OreSection:AddButton({
-	Name = "Destroy All Ores",
-	Callback = function()
-            destroyOres()
-  	end    
-})
-
--- Webhook
-
-local RebornTrackerSection = WebhooksTab:AddSection({
-	Name = "Reborn Tracker"
-})
-
-local ShinySection = WebhooksTab:AddSection({
-	Name = "Shiny Tracker"
-})
-
-local DecimalSection = WebhooksTab:AddSection({
-	Name = "Decimal Tracker"
-})
-
-RebornTrackerSection:AddToggle({
-	Name = "Toggle Reborn Tracker",
-	Default = false,
-	Callback = function(Value)
-            RebornTracker = Value
-	end    
-})
-
-ShinySection:AddToggle({
-	Name = "Toggle Shiny Tracker",
-	Default = false,
-	Callback = function(Value)
-            ShinyTracker = Value
-	end    
-})
-
-DecimalSection:AddToggle({
-	Name = "Toggle Decimal Tracker",
-	Default = false,
-	Callback = function(Value)
-            DecimalTracker = Value
-	end    
-})
-
--- Layouts
-
-local LayoutSection = LayoutsTab:AddSection({
-	Name = "Layout Stealer"
-})
-
-LayoutSection:AddTextbox({
-	Name = "Player To Steal Layout From",
-	Default = "Player Name",
-	TextDisappear = false,
-	Callback = function(Value)
-		LayoutPlayerSelected = Value
-	end	  
-})
-
-LayoutSection:AddDropdown({
-	Name = "Select Layout",
-	Default = "Layout 1",
-	Options = {"Layout 1", "Layout 2", "Layout 3"},
-	Callback = function(Value)
-		if Value == "Layout 1" then
-			LayoutCopierSelected = 1
+	AutoRebornSection:AddToggle({
+		Name = "Toggle Auto Rebirth",
+		Default = false,
+		Callback = function(Value)
+			AutoReborn = Value
+			autoReborn()
 		end
-		if Value == "Layout 2" then
-			LayoutCopierSelected = 2
+	})
+
+	AutoLayoutSection:AddSlider({
+		Name = "Minimum Rebirth Time",
+		Min = 0,
+		Max = 120,
+		Default = 0,
+		Color = Color3.fromRGB(255,255,255),
+		Increment = 1,
+		ValueName = "Minimum Time",
+		Callback = function(Value)
+			minrTime = Value
+		end    
+	})
+
+	AutoRebornSection:AddToggle({
+		Name = "Toggle Kick At Life",
+		Default = false,
+		Callback = function(Value)
+			kickAtLife = Value
+			lifeKickFunction()
 		end
-		if Value == "Layout 3" then
-			LayoutCopierSelected = 3
+	})
+
+	AutoRebornSection:AddTextbox({
+		Name = "Life To Kick",
+		Default = "1000000000",
+		TextDisappear = false,
+		Callback = function(Value)
+			lifeToStop = Value
+		end	  
+	})
+
+	AutoRebornSection:AddToggle({
+		Name = "Toggle Kick When Decimal Shiny",
+		Default = false,
+		Callback = function(Value)
+			kickAtDecShiny = Value
 		end
-	end    
-})
+	})
 
-LayoutSection:AddButton({
-	Name = "Build Layout",
-	Callback = function()
-		buildLoadout()
-  	end    
-})
+	local AutoLayoutSection = AutoRebornTab:AddSection({
+		Name = "Auto Load"
+	})
 
--- Teleports
+	AutoLayoutSection:AddToggle({
+		Name = "Toggle Auto Load Layouts",
+		Default = false,
+		Callback = function(Value)
+			AutoLayout = Value
+			autoLayout()
+		end    
+	})
 
-local TeleportsSection = TeleportsTab:AddSection({
-	Name = "Teleports"
-})
+	AutoLayoutSection:AddDropdown({
+		Name = "Select First Layout To Load",
+		Default = "Layout1",
+		Options = {"Layout1", "Layout2", "Layout3"},
+		Callback = function(Value)
+				firstLayoutToLoad = Value
+		end    
+	})
 
-local CrateTpSection = TeleportsTab:AddSection({
-	Name = "Crate TP"
-})
+	AutoLayoutSection:AddDropdown({
+		Name = "Select Second Layout To Load",
+		Default = "Layout2",
+		Options = {"Layout1", "Layout2", "Layout3"},
+		Callback = function(Value)
+				secondLayoutToLoad = Value
+		end    
+	})
 
-local EggTpSection = TeleportsTab:AddSection({
-	Name = "Egg TP"
-})
+	AutoLayoutSection:AddSlider({
+		Name = "Split Wait Time",
+		Min = 0,
+		Max = 30,
+		Default = .10,
+		Color = Color3.fromRGB(255,255,255),
+		Increment = .05,
+		ValueName = "Split Time",
+		Callback = function(Value)
+			waitsplittime = Value
+		end    
+	})
 
-TeleportsSection:AddButton({
-	Name = "Your Base",
-	Callback = function()
-		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(playersBasePos.Position) + Vector3.new(0, 3, 0)
-  	end    
-})
+	AutoLayoutSection:AddSlider({
+		Name = "Load Again Wait Time",
+		Min = 0.3,
+		Max = 3,
+		Default = .3,
+		Color = Color3.fromRGB(255,255,255),
+		Increment = .1,
+		ValueName = "Wait Time",
+		Callback = function(Value)
+			loadAgainTime = Value
+		end    
+	})
 
-TeleportsSection:AddButton({
-	Name = "Fargield",
-	Callback = function()
-		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-325.110077, 104.414345, 525.674622, -0.952662528, 5.33232161e-08, 0.304029793, 4.14620338e-08, 1, -4.54688696e-08, -0.304029793, -3.07107939e-08, -0.952662528)
-  	end    
-})
+	-- Base Tweaks
 
-TeleportsSection:AddButton({
-	Name = "Craftsman",
-	Callback = function()
-		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-131.36438, 223.112289, 221.24263, -0.707134247, 0, 0.707079291, 0, 1, 0, -0.707079291, 0, -0.707134247)
-  	end    
-})
+	local ConveyorSection = BaseTweaksTab:AddSection({
+		Name = "Conveyors"
+	})
 
-TeleportsSection:AddButton({
-	Name = "Leaderboards",
-	Callback = function()
-		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-57.4749336, 179.949585, 315.975037, 0.836414933, -3.42000561e-08, -0.548096716, -6.54395249e-09, 1, -7.23841467e-08, 0.548096716, 6.41298996e-08, 0.836414933)
-  	end    
-})
+	local OreSection = BaseTweaksTab:AddSection({
+		Name = "Ore Tweaks"
+	})
 
-TeleportsSection:AddButton({
-	Name = "Spook McDook",
-	Callback = function()
-		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-363.579102, 50.71241, 1329.94287, -0.963770151, 0.263482153, -0.0415322073, 0.263250232, 0.964664221, 0.0110557415, 0.0429776274, -0.000278171618, -0.999076366)
-  	end    
-})
+	ConveyorSection:AddToggle({
+		Name = "Toggle Conveyor Speed",
+		Default = false,
+		Callback = function(Value)
+			ConvSpeed = Value
+			print(conveyorSpeed)
+			convSpeed()
+		end    
+	})
 
-TeleportsSection:AddButton({
-	Name = "Masked Man",
-	Callback = function()
-		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(game.workspace.Market.Handle.Position)
-  	end    
-})
+	ConveyorSection:AddSlider({
+		Name = "Conveyor Speed Multiplier",
+		Min = 1,
+		Max = 10,
+		Default = 1,
+		Color = Color3.fromRGB(255,255,255),
+		Increment = 1,
+		ValueName = "Speed Multiplier",
+		Callback = function(Value)
+			conveyorSpeed = Value
+		end    
+	})
 
-CrateTpSection:AddToggle({
-	Name = "Toggle Crate TP",
-	Default = false,
-	Callback = function(Value)
-		CrateTP = Value
-		crateTP()
-	end    
-})
+	OreSection:AddToggle({
+		Name = "Lock Ore Rotation",
+		Default = false,
+		Callback = function(Value)
+				RotOres = Value
+				rotOres()
+		end    
+	})
 
-CrateTpSection:AddSlider({
-	Name = "Crate TP Delay",
-	Min = .25,
-	Max = 10,
-	Default = 1,
-	Color = Color3.fromRGB(255,255,255),
-	Increment = .25,
-	ValueName = "Sec Delay",
-	Callback = function(Value)
-		crateTpDelay = Value
-	end    
-})
+	OreSection:AddToggle({
+		Name = "Freeze Ores",
+		Default = false,
+		Callback = function(Value)
+				FreezeOres = Value
+				freezeOres()
+		end    
+	})
 
-EggTpSection:AddToggle({
-	Name = "Toggle Egg TP",
-	Default = false,
-	Callback = function(Value)
-		EggTP = Value
-		eggTP()
-	end    
-})
+	OreSection:AddButton({
+		Name = "TP Ores To Player",
+		Callback = function()
+				tpOres()
+		end    
+	})
 
-EggTpSection:AddButton({
-	Name = "Remove Water",
-	Callback = function()
-		game:GetService('Workspace').Terrain:Clear()
-  	end    
-})
+	OreSection:AddButton({
+		Name = "Destroy All Ores",
+		Callback = function()
+				destroyOres()
+		end    
+	})
 
-EggTpSection:AddButton({
-	Name = "Claim Eggs",
-	Callback = function()
-		local remoteEvent = game:GetService("ReplicatedStorage").EventControllers.Easter.EasterBadgeItem
-		for _, eggName in ipairs(EggNames) do
-			remoteEvent:InvokeServer(eggName)
+	-- Webhook
+
+	local RebornTrackerSection = WebhooksTab:AddSection({
+		Name = "Reborn Tracker"
+	})
+
+	local ShinySection = WebhooksTab:AddSection({
+		Name = "Shiny Tracker"
+	})
+
+	local DecimalSection = WebhooksTab:AddSection({
+		Name = "Decimal Tracker"
+	})
+
+	RebornTrackerSection:AddToggle({
+		Name = "Toggle Reborn Tracker",
+		Default = false,
+		Callback = function(Value)
+				RebornTracker = Value
+		end    
+	})
+
+	ShinySection:AddToggle({
+		Name = "Toggle Shiny Tracker",
+		Default = false,
+		Callback = function(Value)
+				ShinyTracker = Value
+		end    
+	})
+
+	DecimalSection:AddToggle({
+		Name = "Toggle Decimal Tracker",
+		Default = false,
+		Callback = function(Value)
+				DecimalTracker = Value
+		end    
+	})
+
+	-- Layouts
+
+	local LayoutSection = LayoutsTab:AddSection({
+		Name = "Layout Stealer"
+	})
+
+	LayoutSection:AddTextbox({
+		Name = "Player To Steal Layout From",
+		Default = "Player Name",
+		TextDisappear = false,
+		Callback = function(Value)
+			LayoutPlayerSelected = Value
+		end	  
+	})
+
+	LayoutSection:AddDropdown({
+		Name = "Select Layout",
+		Default = "Layout 1",
+		Options = {"Layout 1", "Layout 2", "Layout 3"},
+		Callback = function(Value)
+			if Value == "Layout 1" then
+				LayoutCopierSelected = 1
+			end
+			if Value == "Layout 2" then
+				LayoutCopierSelected = 2
+			end
+			if Value == "Layout 3" then
+				LayoutCopierSelected = 3
+			end
+		end    
+	})
+
+	LayoutSection:AddButton({
+		Name = "Build Layout",
+		Callback = function()
+			buildLoadout()
+		end    
+	})
+
+	-- Teleports
+
+	local TeleportsSection = TeleportsTab:AddSection({
+		Name = "Teleports"
+	})
+
+	local CrateTpSection = TeleportsTab:AddSection({
+		Name = "Crate TP"
+	})
+
+	local EggTpSection = TeleportsTab:AddSection({
+		Name = "Egg TP"
+	})
+
+	TeleportsSection:AddButton({
+		Name = "Your Base",
+		Callback = function()
+			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(playersBasePos.Position) + Vector3.new(0, 3, 0)
+		end    
+	})
+
+	TeleportsSection:AddButton({
+		Name = "Fargield",
+		Callback = function()
+			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-325.110077, 104.414345, 525.674622, -0.952662528, 5.33232161e-08, 0.304029793, 4.14620338e-08, 1, -4.54688696e-08, -0.304029793, -3.07107939e-08, -0.952662528)
+		end    
+	})
+
+	TeleportsSection:AddButton({
+		Name = "Craftsman",
+		Callback = function()
+			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-131.36438, 223.112289, 221.24263, -0.707134247, 0, 0.707079291, 0, 1, 0, -0.707079291, 0, -0.707134247)
+		end    
+	})
+
+	TeleportsSection:AddButton({
+		Name = "Leaderboards",
+		Callback = function()
+			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-57.4749336, 179.949585, 315.975037, 0.836414933, -3.42000561e-08, -0.548096716, -6.54395249e-09, 1, -7.23841467e-08, 0.548096716, 6.41298996e-08, 0.836414933)
+		end    
+	})
+
+	TeleportsSection:AddButton({
+		Name = "Spook McDook",
+		Callback = function()
+			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-363.579102, 50.71241, 1329.94287, -0.963770151, 0.263482153, -0.0415322073, 0.263250232, 0.964664221, 0.0110557415, 0.0429776274, -0.000278171618, -0.999076366)
+		end    
+	})
+
+	TeleportsSection:AddButton({
+		Name = "Draedon",
+		Callback = function()
+			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-138.1138, -101.260773, -122.40168, 0.92160821, -0, -0.388121605, 0, 1, -0, 0.388121605, 0, 0.92160821)
+		end    
+	})
+
+	TeleportsSection:AddButton({
+		Name = "Masked Man",
+		Callback = function()
+			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(game.workspace.Market.Handle.Position)
+		end    
+	})
+
+	CrateTpSection:AddToggle({
+		Name = "Toggle Crate TP",
+		Default = false,
+		Callback = function(Value)
+			CrateTP = Value
+			crateTP()
+		end    
+	})
+
+	CrateTpSection:AddSlider({
+		Name = "Crate TP Delay",
+		Min = .25,
+		Max = 10,
+		Default = 1,
+		Color = Color3.fromRGB(255,255,255),
+		Increment = .25,
+		ValueName = "Sec Delay",
+		Callback = function(Value)
+			crateTpDelay = Value
+		end    
+	})
+
+	EggTpSection:AddToggle({
+		Name = "Toggle Egg TP",
+		Default = false,
+		Callback = function(Value)
+			EggTP = Value
+			eggTP()
+		end    
+	})
+
+	EggTpSection:AddButton({
+		Name = "Remove Water",
+		Callback = function()
+			game:GetService('Workspace').Terrain:Clear()
+		end    
+	})
+
+	EggTpSection:AddButton({
+		Name = "Claim Eggs",
+		Callback = function()
+			local remoteEvent = game:GetService("ReplicatedStorage").EventControllers.Easter.EasterBadgeItem
+			for _, eggName in ipairs(EggNames) do
+				remoteEvent:InvokeServer(eggName)
+			end
 		end
+	})
+
+	-- Remote Spam
+
+	local RemoteSection = RemoteSpamTab:AddSection({
+		Name = "Remote Stuff"
+	})
+
+	local AutoPulseSection = RemoteSpamTab:AddSection({
+		Name = "Pulsar Stuff"
+	})
+
+	RemoteSection:AddToggle({
+		Name = "Toggle Auto Remote",
+		Default = false,
+		Callback = function(Value)
+			AutoRemote = Value
+			autoRemote()
+		end    
+	})
+
+	RemoteSection:AddSlider({
+		Name = "Auto Remote Delay",
+		Min = 0.0001,
+		Max = 10,
+		Default = 0.0001,
+		Color = Color3.fromRGB(255,255,255),
+		Increment = .001,
+		ValueName = "Delay",
+		Callback = function(Value)
+			remoteDelay = Value
+		end    
+	})
+
+	AutoPulseSection:AddToggle({
+		Name = "Toggle Auto Pulse",
+		Default = false,
+		Callback = function(Value)
+			AutoPulse = Value
+			autoPulse()
+		end    
+	})
+
+	AutoPulseSection:AddSlider({
+		Name = "Auto Pulse Delay",
+		Min = 0.0001,
+		Max = 10,
+		Default = 0.0001,
+		Color = Color3.fromRGB(255,255,255),
+		Increment = .001,
+		ValueName = "Delay",
+		Callback = function(Value)
+			pulseDelay = Value
+		end    
+	})
+
+	AutoPulseSection:AddButton({
+		Name = "Pulse Once",
+		Callback = function()
+			game:GetService("ReplicatedStorage").Pulse:FireServer()
+		end    
+	})
+
+	AutoPulseSection:AddToggle({
+		Name = "Toggle Pulse When Layout Loaded",
+		Default = false,
+		Callback = function(Value)
+			pulseWithReborn = Value
+		end    
+	})
+
+	-- Vendors
+
+	local VendorsSection = VendorsTab:AddSection({
+		Name = "Vendors"
+	})
+
+	VendorsSection:AddButton({
+		Name = "Open Craftsman",
+		Callback = function()
+			openCraftsman()
+		end    
+	})
+
+	VendorsSection:AddButton({
+		Name = "Open SpookMcDook",
+		Callback = function()
+			playergui.SpookMcDookShop.Visible = true
+		end    
+	})
+
+	VendorsSection:AddButton({
+		Name = "Open Masked Man",
+		Callback = function()
+			playergui.EventShop.Visible = true
+		end    
+	})
+
+	-- Misc
+
+	local BoxSection = MiscTab:AddSection({
+		Name = "Boxes"
+	})
+
+	local RpSection = MiscTab:AddSection({
+		Name = "Research Points"
+	})
+
+	local MovementSection = MiscTab:AddSection({
+		Name = "Movement"
+	})
+
+	local AutoDailySection = MiscTab:AddSection({
+		Name = "Auto Daily"
+	})
+
+	local BuySection = MiscTab:AddSection({
+		Name = "Auto Buy"
+	})
+
+	local TransitionSection = MiscTab:AddSection({
+		Name = "Transition Screen"
+	})
+
+	local AntiAFKSection = MiscTab:AddSection({
+		Name = "Anti AFK"
+	})
+
+	BoxSection:AddToggle({
+		Name = "Toggle Open Boxes",
+		Default = false,
+		Callback = function(Value)
+			OpenBoxes = Value
+			openBoxes()
+		end    
+	})
+
+	BoxSection:AddDropdown({
+		Name = "Box To Open",
+		Default = "Regular",
+		Options = {"Regular", "Unreal", "Inferno", "Luxury", "Red-Banded", "Easter", "Pumpkin", "Festive"},
+		Callback = function(Value)
+			boxToOpen = Value
+		end    
+	})
+
+	BoxSection:AddButton({
+		Name = "Change Clover Status",
+		Callback = function()
+			game:GetService("ReplicatedStorage").ToggleBoxItem:InvokeServer("Clover")
+		end
+	})
+
+	RpSection:AddToggle({
+		Name = "Toggle RP Farm",
+		Default = false,
+		Callback = function(Value)
+			OreToFurnace = Value
+			oresToFurnace()
+		end    
+	})
+
+	RpSection:AddTextbox({
+		Name = "Name Of RP Furnace",
+		Default = "Case Sensitive",
+		TextDisappear = false,
+		Callback = function(Value)
+			rpFurnaceString = Value
+		end	  
+	})
+
+	MovementSection:AddSlider({
+		Name = "Walkspeed Modifier",
+		Min = 16,
+		Max = 500,
+		Default = 16,
+		Color = Color3.fromRGB(255,255,255),
+		Increment = 5,
+		ValueName = "Walkspeed",
+		Callback = function(Value)
+			game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
+		end    
+	})
+
+	MovementSection:AddSlider({
+		Name = "Jump Height Modifier",
+		Min = 50,
+		Max = 500,
+		Default = 50,
+		Color = Color3.fromRGB(255,255,255),
+		Increment = 5,
+		ValueName = "Walkspeed",
+		Callback = function(Value)
+			game.Players.LocalPlayer.Character.Humanoid.JumpPower = Value
+		end    
+	})
+
+	AutoDailySection:AddButton({
+		Name = "Claim Fargield",
+		Callback = function()
+			print(playerPos)
+			playerPos = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+			playersPrevLocation = Vector3.new(playerPos.X, playerPos.Y, playerPos.Z)
+			print(playersPrevLocation)
+			wait(.25)
+			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-325.110077, 104.414345, 525.674622, -0.952662528, 5.33232161e-08, 0.304029793, 4.14620338e-08, 1, -4.54688696e-08, -0.304029793, -3.07107939e-08, -0.952662528)
+			print("tped to fargield")
+			wait(.25)
+			fireproximityprompt(game:GetService("Workspace").Map.Fargield.Internal.ProximityPrompt)
+			wait(1)
+			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(playersPrevLocation)
+		end
+	})
+
+	AutoDailySection:AddButton({
+		Name = "Claim SpookMcDook",
+		Callback = function()
+				game:GetService("ReplicatedStorage").RedeemFreeBox:FireServer()
+		end
+	})
+
+	BuySection:AddToggle({
+		Name = "Toggle Bazingium Mine Farm",
+		Default = false,
+		Callback = function(Value)
+			AutoBaz = Value
+			buyBaz()
+		end    
+	})
+
+	TransitionSection:AddParagraph("Invisble Transition Screen","Always On")
+
+	AntiAFKSection:AddParagraph("Anti AFK","Always On")
+
+	while wait() do
+		playergui.TransitionScreen.Visible = false
+		playergui.TransitionScreen.BackgroundTransparency = 1
 	end
-})
 
--- Remote Spam
-
-local RemoteSection = RemoteSpamTab:AddSection({
-	Name = "Remote Stuff"
-})
-
-local AutoPulseSection = RemoteSpamTab:AddSection({
-	Name = "Pulsar Stuff"
-})
-
-RemoteSection:AddToggle({
-	Name = "Toggle Auto Remote",
-	Default = false,
-	Callback = function(Value)
-		AutoRemote = Value
-		autoRemote()
-	end    
-})
-
-RemoteSection:AddSlider({
-	Name = "Auto Remote Delay",
-	Min = 0.0001,
-	Max = 10,
-	Default = 0.0001,
-	Color = Color3.fromRGB(255,255,255),
-	Increment = .001,
-	ValueName = "Delay",
-	Callback = function(Value)
-		remoteDelay = Value
-	end    
-})
-
-AutoPulseSection:AddToggle({
-	Name = "Toggle Auto Pulse",
-	Default = false,
-	Callback = function(Value)
-		AutoPulse = Value
-		autoPulse()
-	end    
-})
-
-AutoPulseSection:AddSlider({
-	Name = "Auto Pulse Delay",
-	Min = 0.0001,
-	Max = 10,
-	Default = 0.0001,
-	Color = Color3.fromRGB(255,255,255),
-	Increment = .001,
-	ValueName = "Delay",
-	Callback = function(Value)
-		pulseDelay = Value
-	end    
-})
-
-AutoPulseSection:AddButton({
-	Name = "Pulse Once",
-	Callback = function()
-		game:GetService("ReplicatedStorage").Pulse:FireServer()
-  	end    
-})
-
-AutoPulseSection:AddToggle({
-	Name = "Toggle Pulse When Layout Loaded",
-	Default = false,
-	Callback = function(Value)
-		pulseWithReborn = Value
-	end    
-})
-
--- Vendors
-
-local VendorsSection = VendorsTab:AddSection({
-	Name = "Vendors"
-})
-
-VendorsSection:AddButton({
-	Name = "Open Craftsman",
-	Callback = function()
-		openCraftsman()
-  	end    
-})
-
-VendorsSection:AddButton({
-	Name = "Open SpookMcDook",
-	Callback = function()
-		playergui.SpookMcDookShop.Visible = true
-  	end    
-})
-
-VendorsSection:AddButton({
-	Name = "Open Masked Man",
-	Callback = function()
-		playergui.EventShop.Visible = true
-  	end    
-})
-
--- Misc
-
-local BoxSection = MiscTab:AddSection({
-	Name = "Boxes"
-})
-
-local RpSection = MiscTab:AddSection({
-	Name = "Research Points"
-})
-
-local MovementSection = MiscTab:AddSection({
-	Name = "Movement"
-})
-
-local AutoDailySection = MiscTab:AddSection({
-	Name = "Auto Daily"
-})
-
-local BuySection = MiscTab:AddSection({
-	Name = "Auto Buy"
-})
-
-local TransitionSection = MiscTab:AddSection({
-	Name = "Transition Screen"
-})
-
-local AntiAFKSection = MiscTab:AddSection({
-	Name = "Anti AFK"
-})
-
-BoxSection:AddToggle({
-	Name = "Toggle Open Boxes",
-	Default = false,
-	Callback = function(Value)
-		OpenBoxes = Value
-		openBoxes()
-	end    
-})
-
-BoxSection:AddDropdown({
-	Name = "Box To Open",
-	Default = "Regular",
-	Options = {"Regular", "Unreal", "Inferno", "Luxury", "Red-Banded", "Easter", "Pumpkin", "Festive"},
-	Callback = function(Value)
-		boxToOpen = Value
-	end    
-})
-
-BoxSection:AddButton({
-	Name = "Change Clover Status",
-	Callback = function()
-        game:GetService("ReplicatedStorage").ToggleBoxItem:InvokeServer("Clover")
-	end
-})
-
-RpSection:AddToggle({
-	Name = "Toggle RP Farm",
-	Default = false,
-	Callback = function(Value)
-		OreToFurnace = Value
-		oresToFurnace()
-	end    
-})
-
-RpSection:AddTextbox({
-	Name = "Name Of RP Furnace",
-	Default = "Case Sensitive",
-	TextDisappear = false,
-	Callback = function(Value)
-		rpFurnaceString = Value
-	end	  
-})
-
-MovementSection:AddSlider({
-	Name = "Walkspeed Modifier",
-	Min = 16,
-	Max = 500,
-	Default = 16,
-	Color = Color3.fromRGB(255,255,255),
-	Increment = 5,
-	ValueName = "Walkspeed",
-	Callback = function(Value)
-		game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
-	end    
-})
-
-MovementSection:AddSlider({
-	Name = "Jump Height Modifier",
-	Min = 50,
-	Max = 500,
-	Default = 50,
-	Color = Color3.fromRGB(255,255,255),
-	Increment = 5,
-	ValueName = "Walkspeed",
-	Callback = function(Value)
-		game.Players.LocalPlayer.Character.Humanoid.JumpPower = Value
-	end    
-})
-
-AutoDailySection:AddButton({
-	Name = "Claim Fargield",
-	Callback = function()
-	    print(playerPos)
-		playerPos = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
-		playersPrevLocation = Vector3.new(playerPos.X, playerPos.Y, playerPos.Z)
-		print(playersPrevLocation)
-		wait(.25)
-		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-325.110077, 104.414345, 525.674622, -0.952662528, 5.33232161e-08, 0.304029793, 4.14620338e-08, 1, -4.54688696e-08, -0.304029793, -3.07107939e-08, -0.952662528)
-		print("tped to fargield")
-		wait(.25)
-		fireproximityprompt(game:GetService("Workspace").Map.Fargield.Internal.ProximityPrompt)
-		wait(1)
-		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(playersPrevLocation)
-	end
-})
-
-AutoDailySection:AddButton({
-	Name = "Claim SpookMcDook",
-	Callback = function()
-			game:GetService("ReplicatedStorage").RedeemFreeBox:FireServer()
-	end
-})
-
-BuySection:AddToggle({
-	Name = "Toggle Bazingium Mine Farm",
-	Default = false,
-	Callback = function(Value)
-		AutoBaz = Value
-		buyBaz()
-	end    
-})
-
-TransitionSection:AddParagraph("Invisble Transition Screen","Always On")
-
-AntiAFKSection:AddParagraph("Anti AFK","Always On")
-
-while wait() do
-	playergui.TransitionScreen.Visible = false
-	playergui.TransitionScreen.BackgroundTransparency = 1
-end
-
-OrionLib:Init()
+	OrionLib:Init()
