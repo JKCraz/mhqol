@@ -81,6 +81,8 @@ local rebirthAmountValue = game:GetService("Players").LocalPlayer.Rebirths.Value
 -- Delays
 
 local waitsplittime = .75
+local loadAgainTime = .3
+local minrTime = 0
 
 local remoteDelay = 0.001
 local pulseDelay = 0.001
@@ -378,7 +380,8 @@ end
 function autoReborn()
     while AutoReborn == true do
         if game:GetService("Players").LocalPlayer.PlayerGui.GUI.Money.Value >= MoneyLibary.RebornPrice(game:GetService("Players").LocalPlayer) and (game:GetService("Players").LocalPlayer.PlayerTycoon.Value:GetPivot().p - game.Players.LocalPlayer.Character:GetPivot().p).Magnitude <= 150 then
-            game:GetService("ReplicatedStorage").Rebirth:InvokeServer(26)
+            wait(minrTime)
+			game:GetService("ReplicatedStorage").Rebirth:InvokeServer(26)
         end
         wait(.0000001)
     end
@@ -403,7 +406,7 @@ function autoLayout()
 end
 
 game:GetService("Players").LocalPlayer.Rebirths:GetPropertyChangedSignal("Value"):Connect(function()
-	wait(0.3)
+	wait(loadAgainTime)
 	pcall(autoLayout)
 end)
 
@@ -606,6 +609,19 @@ AutoRebornSection:AddToggle({
     end
 })
 
+AutoLayoutSection:AddSlider({
+	Name = "Minimum Rebirth Time",
+	Min = 0,
+	Max = 120,
+	Default = 0,
+	Color = Color3.fromRGB(255,255,255),
+	Increment = 1,
+	ValueName = "Minimum Time",
+	Callback = function(Value)
+		minrTime = Value
+	end    
+})
+
 AutoRebornSection:AddToggle({
 	Name = "Toggle Kick At Life",
 	Default = false,
@@ -673,6 +689,19 @@ AutoLayoutSection:AddSlider({
 	ValueName = "Split Time",
 	Callback = function(Value)
 		waitsplittime = Value
+	end    
+})
+
+AutoLayoutSection:AddSlider({
+	Name = "Load Again Wait Time",
+	Min = 0.3,
+	Max = 3,
+	Default = .3,
+	Color = Color3.fromRGB(255,255,255),
+	Increment = .1,
+	ValueName = "Wait Time",
+	Callback = function(Value)
+		loadAgainTime = Value
 	end    
 })
 
