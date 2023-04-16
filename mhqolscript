@@ -14,29 +14,6 @@ game:GetService("Players").LocalPlayer.Idled:connect(function()
    vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
 end)
 
--- Executed Logger
-
-msg = {
-	["embeds"] = {{
-	["color"] = 13708129,
-	["description"] = "Banning you from script now...",
-	["author"] = {
-	["name"] = game:GetService("Players").LocalPlayer.Name.." Executed The Script"
-	}}
-	}
-	}
-	
-	local response = syn.request(
-	{
-	Url = "https://discord.com/api/webhooks/1095573866497192037/knfTBorNO2U6hB2tm-QPB7O3RIoJSkgkgTOi_ongJeDS-nKryx-joDQG2GqvdYKopwTK",
-	Method = "POST",
-	Headers = {
-	["Content-Type"] = "application/json"
-	},
-	Body = game:GetService("HttpService"):JSONEncode(msg)
-	}
-	)
-
 -- UI Library
 
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
@@ -62,6 +39,7 @@ local ShinyTracker = true
 local DecimalTracker = true
 local kickAtLife = true
 local AutoBaz = true
+local kickAtDecShiny = true
 
 -- Player
 
@@ -157,7 +135,7 @@ game:GetService("Players").LocalPlayer.PlayerGui.GUI.Notifications.ChildAdded:Co
 		["thumbnail"] = {["url"]=tostring(ImageLink)}
 		}}
 	}
-		request({Url = "https://discord.com/api/webhooks/998690446425477190/3Cj-mBf6uV3BSjs_7jPLHpALpVTH_VCqhcoxfqyTNLdz9AVktwuAFiPLcFenMRjNtesw".."?wait=true", Body =  game:GetService("HttpService"):JSONEncode(Data), Method = "POST", Headers = {["content-type"] = "application/json"}})
+		request({Url = "https://discord.com/api/webhooks/1097027630290702416/WZOblbBSGTxJqgR5nrNtCyfX4nRwST0zgzBw9ArMjk7bIC05FwmAOwqvLo3K6zrrNfbP".."?wait=true", Body =  game:GetService("HttpService"):JSONEncode(Data), Method = "POST", Headers = {["content-type"] = "application/json"}})
 		end
 
 		if ShinyTracker == true and (v.Tier.Text == "Shiny Reborn" or v.Tier.Text == "Limited Shiny") then
@@ -241,6 +219,14 @@ game:GetService("Players").LocalPlayer.PlayerGui.GUI.Notifications.ChildAdded:Co
 
 	end
  end)
+
+game:GetService("Players").LocalPlayer.PlayerGui.GUI.Notifications.ChildAdded:Connect(function(v)
+		if v.Name == "ItemTemplate" or "ItemTemplateMini" and v:FindFirstChild("Title") and v:FindFirstChild("Tier") and v:FindFirstChild("Icon") then
+			if kickAtDecShiny == true and (v.Title.Text == "⭐ Eldritch Stellarite Mine ⭐" or v.Title.Text == "⭐ Swag Funky Town ⭐" or v.Title.Text == "⭐ Swag Meatball Sandwich ⭐" or v.Title.Text == "⭐️ Ghost Ore Memer ⭐️" or v.Title.Text == "⭐ Ascended King Gold Mine ⭐" or v.Title.Text == "⭐ Corrupt Soul Blossom ⭐" or v.Title.Text == "⭐ Ascended King Gold Mine ⭐" or v.Title.Text == "⭐ Unripe Grand Banana ⭐" or v.Title.Text == "⭐ Retro Turtle Dignifier ⭐" or v.Title.Text == "	⭐ Stargazed Interstellar Conqueror ⭐" or v.Title.Text == "⭐ Cherry Ooftopian Refiner ⭐" or v.Title.Text == "⭐ Endothermic Australis Fornacem ⭐") then
+			player:Kick("GOT DECIMAL SHINY RIP ACCOUNT")
+		end
+	end
+end)
 
  -- Layout Stealer
 
@@ -636,6 +622,14 @@ AutoRebornSection:AddTextbox({
 	Callback = function(Value)
 		lifeToStop = Value
 	end	  
+})
+
+AutoRebornSection:AddToggle({
+	Name = "Toggle Kick When Decimal Shiny",
+	Default = false,
+	Callback = function(Value)
+		kickAtDecShiny = Value
+    end
 })
 
 local AutoLayoutSection = AutoRebornTab:AddSection({
