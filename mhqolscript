@@ -699,11 +699,11 @@
 
 	AutoLayoutSection:AddSlider({
 		Name = "Load Again Wait Time",
-		Min = 0.3,
+		Min = 0.300000000000000000,
 		Max = 3,
-		Default = .3,
+		Default = 0.300000000000000000,
 		Color = Color3.fromRGB(255,255,255),
-		Increment = .1,
+		Increment = .05,
 		ValueName = "Wait Time",
 		Callback = function(Value)
 			loadAgainTime = Value
@@ -943,13 +943,6 @@
 		Callback = function(Value)
 			EggTP = Value
 			eggTP()
-		end    
-	})
-
-	EggTpSection:AddButton({
-		Name = "Remove Water",
-		Callback = function()
-			game:GetService('Workspace').Terrain:Clear()
 		end    
 	})
 
