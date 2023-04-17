@@ -1,7 +1,10 @@
 
 	--[[ TO DO:
 
-	make show multiple reborn 
+	ore boost
+	ore value tracker
+	ore esp - maybe
+	add webhook username
 
 	--]]
 
@@ -41,6 +44,7 @@
 	local AutoBaz = true
 	local kickAtDecShiny = true
 	local pulseWithReborn = true
+	local OreBoost = true
 
 	-- Player
 
@@ -49,6 +53,7 @@
 	local playerOres = droppedParts[tostring(playersBase)]:GetChildren()
 
 	local BaseOres = game:GetService("Workspace").DroppedParts[tostring(playersBase)]
+	local physicalBase = game:GetService("Workspace").Tycoons[tostring(playersBase)]
 	local playersBasePos = game:GetService("Workspace").Tycoons[tostring(playersBase)].Base
 
 	print(playersBase)
@@ -79,6 +84,8 @@
 	local rebirthAmount = game:GetService("Players").LocalPlayer.Rebirths
 	local rebirthAmountValue = game:GetService("Players").LocalPlayer.Rebirths.Value
 
+	local layoutLoaded = false
+
 	-- Delays
 
 	local waitsplittime = .75
@@ -100,6 +107,33 @@
 
 	--Functions
 
+	-- Oreboost
+
+	function oreBoost()
+		while OreBoost == true do
+
+			for i, upgrader in pairs(physicalBase:GetChildren()) do -- Gets Upgraders
+				if upgrader:IsA("Model") and upgrader.Model:FindFirstChild("Upgrade") then
+					local upgraders = upgrader
+				end
+			end
+
+			for i, mine in pairs(physicalBase:GetChildren()) do -- Gets Mine
+				if mine:IsA("Model") and mine.Model:FindFirstChild("Drop") then
+					local obMine = mine
+				end
+			end
+
+			for i, furnace in pairs(physicalBase:GetChildren()) do -- Gets Furnace
+				if furnace:IsA("Model") and furnace.Model:FindFirstChild("Lava") then
+					local obFurnace = furnace
+				end
+			end
+
+			wait(0.1)
+		end
+	end
+	
 	-- Webhooks
 
 	if syn then request = syn.request end
@@ -138,7 +172,7 @@
 			["thumbnail"] = {["url"]=tostring(ImageLink)}
 			}}
 		}
-			request({Url = "https://discord.com/api/webhooks/1097027630290702416/WZOblbBSGTxJqgR5nrNtCyfX4nRwST0zgzBw9ArMjk7bIC05FwmAOwqvLo3K6zrrNfbP".."?wait=true", Body =  game:GetService("HttpService"):JSONEncode(Data), Method = "POST", Headers = {["content-type"] = "application/json"}})
+			request({Url = "https://discord.com/api/webhooks/1097521093851492493/1h0bWUEGrDPV9999UOkTBOCtZqBK-KuAEIYwV3wjVwKjHfqyK-rue6FrCvkkAWNG-UrJ".."?wait=true", Body =  game:GetService("HttpService"):JSONEncode(Data), Method = "POST", Headers = {["content-type"] = "application/json"}})
 			end
 
 			if ShinyTracker == true and (v.Tier.Text == "Shiny Reborn" or v.Tier.Text == "Limited Shiny") then
@@ -176,7 +210,7 @@
 					}}
 				}
 				request({
-					Url = "https://discord.com/api/webhooks/998689710006354010/mFEQQlRDI2JO1UAKqYB2RMkYNRyGk0fT0i8FW7FIWXcqqB6rCtOUezllsGpaAEzTja9n".."?wait=true",
+					Url = "https://discord.com/api/webhooks/1097521049601572924/o9hF7NZpiMTMIje_KUh9HmOYr9FYNq4zLfAIRz9Qo_Qa9ETyxxhHRZtcKlmLBy5ho3ar".."?wait=true",
 					Body =  game:GetService("HttpService"):JSONEncode(Data),
 					Method = "POST",
 					Headers = {
@@ -217,7 +251,7 @@
 			["thumbnail"] = {["url"]=tostring(ImageLink)}
 			}}
 		}
-			request({Url = "https://discord.com/api/webhooks/998690105478877214/YOurjv5MWjwCkIFOvk4Dbjk9FSLk8QQpb6oLI2EC90OrCgnJBM-41KlyzV0jhE8KoAW3".."?wait=true", Body =  game:GetService("HttpService"):JSONEncode(Data), Method = "POST", Headers = {["content-type"] = "application/json"}})
+			request({Url = "https://discord.com/api/webhooks/1097521137413533837/_b3U0AxQLat16pXyB5VvUnm_cLU-mJDhcKKX7n-bi7oV904F9dzY3kOWgGREqAeqRbIS".."?wait=true", Body =  game:GetService("HttpService"):JSONEncode(Data), Method = "POST", Headers = {["content-type"] = "application/json"}})
 			end
 
 		end
@@ -403,16 +437,23 @@
 			game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",firstLayoutToLoad)
 			wait(waitsplittime)
 			game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",secondLayoutToLoad)
+			layoutLoaded = true
 		end
 	end
 
 	game:GetService("Players").LocalPlayer.Rebirths:GetPropertyChangedSignal("Value"):Connect(function()
+		layoutLoaded = false
 		if pulseWithReborn == true then
 			wait(1)
 			game:GetService("ReplicatedStorage").Pulse:FireServer()
 		end
-		wait(loadAgainTime)
-		pcall(autoLayout)
+		if layoutLoaded = false then
+			wait(loadAgainTime)
+			pcall(autoLayout)
+			if layoutLoaded = false then
+				pcall(autoLayout)
+			end
+		end
 	end)
 
 	-- Base Tweaks
@@ -1082,6 +1123,10 @@
 		Name = "Anti AFK"
 	})
 
+	local obSection = MiscTab:AddSection({
+		Name = "Ore Boost"
+	})
+
 	BoxSection:AddToggle({
 		Name = "Toggle Open Boxes",
 		Default = false,
@@ -1181,6 +1226,15 @@
 		Callback = function(Value)
 			AutoBaz = Value
 			buyBaz()
+		end    
+	})
+
+	obSection:AddToggle({
+		Name = "Toggle Ore Boost",
+		Default = false,
+		Callback = function(Value)
+			OreBoost = Value
+			oreBoost()
 		end    
 	})
 
