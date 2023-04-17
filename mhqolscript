@@ -447,10 +447,10 @@
 			wait(1)
 			game:GetService("ReplicatedStorage").Pulse:FireServer()
 		end
-		if layoutLoaded = false then
+		if layoutLoaded == false then
 			wait(loadAgainTime)
 			pcall(autoLayout)
-			if layoutLoaded = false then
+			if layoutLoaded == false then
 				pcall(autoLayout)
 			end
 		end
