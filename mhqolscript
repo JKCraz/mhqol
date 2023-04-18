@@ -105,32 +105,72 @@
 	local conveyorSpeed = 1
 	local playersPrevLocation = "234283492389423004982340823890489"
 
+	-- Ore Boost
+
+	local resetters = {"Tesla Resetter", "Tesla Refuter", "Black Dwarf", "Void Star", "The Final Upgrader", "The Ultimate Sacrifice", "Daestrophe", "⭐ Paranormal Tesla Resetter ⭐", "⭐ Paranormal Tesla Refuter ⭐", "⭐ Stargazed Black Dwarf ⭐", "⭐ Stargazed Void Star ⭐"}
+
+	local obUpgraded = false
+	local obResetted = false
+
+	local obMine = game.Workspace
+	local obUpgraders = game.Workspace
+	local obResetters = game.Workspace
+	local obFurnace = game.Workspace
+
 	--Functions
 
 	-- Oreboost
 
 	function oreBoost()
+
 		while OreBoost == true do
 
-			for i, upgrader in pairs(physicalBase:GetChildren()) do -- Gets Upgraders
-				if upgrader:IsA("Model") and upgrader.Model:FindFirstChild("Upgrade") then
-					local upgraders = upgrader
-				end
+			game:GetService("ReplicatedStorage").UpdateLimit:FireServer("OreLimit",0.11691542288557213) -- Sets Ore Limit To One
+
+			if obUpgraded = false then
+				upgradeOres()
 			end
 
 			for i, mine in pairs(physicalBase:GetChildren()) do -- Gets Mine
-				if mine:IsA("Model") and mine.Model:FindFirstChild("Drop") then
-					local obMine = mine
+				if mine:IsA("Model") and mine.Model:FindFirstChild("Colored") then
+					obMine = mine
+					print("Mine: "..tostring(obMine))
 				end
 			end
+
+			for i, upgrader in pairs(physicalBase:GetChildren()) do -- Gets Upgraders
+				if upgrader:IsA("Model") and upgrader.Model:FindFirstChild("Upgrade") and not table.find(resetters, upgrader.Name) then
+					obUpgraders = upgrader.Model:FindFirstChild("Upgrade")
+					print("Upgraders: "..tostring(obUpgraders.Parent.Parent))
+				end
+			end
+
+			for i, resetter in pairs(physicalBase:GetChildren()) do -- Gets Resetters
+				if resetter:IsA("Model") and table.find(resetters, resetter.Name) then
+				  obResetters = resetter
+				  print("Resetters: "..tostring(obResetters))
+				end
+			  end
 
 			for i, furnace in pairs(physicalBase:GetChildren()) do -- Gets Furnace
 				if furnace:IsA("Model") and furnace.Model:FindFirstChild("Lava") then
-					local obFurnace = furnace
+					obFurnace = furnace
+					print("Furnace: "..tostring(obFurnace))
 				end
 			end
-
 			wait(0.1)
+		end
+	end
+
+	function upgradeOres()
+		while wait() do
+			for i, ores in pairs(BaseOres:GetChildren()) do
+				ores.Anchored = true
+				wait(.25)
+				print(upgrader.CFrame)
+				upgraders.Vector3 = Vector3.new(ores.CFrame)
+				print(upgrader.Vector3)
+			end
 		end
 	end
 	
@@ -444,7 +484,7 @@
 	game:GetService("Players").LocalPlayer.Rebirths:GetPropertyChangedSignal("Value"):Connect(function()
 		layoutLoaded = false
 		if pulseWithReborn == true then
-			wait(1)
+			wait(3)
 			game:GetService("ReplicatedStorage").Pulse:FireServer()
 		end
 		if layoutLoaded == false then
@@ -731,7 +771,7 @@
 		Max = 30,
 		Default = .10,
 		Color = Color3.fromRGB(255,255,255),
-		Increment = .05,
+		Increment = .20,
 		ValueName = "Split Time",
 		Callback = function(Value)
 			waitsplittime = Value
@@ -740,11 +780,11 @@
 
 	AutoLayoutSection:AddSlider({
 		Name = "Load Again Wait Time",
-		Min = 0.300000000000000000,
+		Min = 0.30,
 		Max = 3,
-		Default = 0.300000000000000000,
+		Default = 0.30,
 		Color = Color3.fromRGB(255,255,255),
-		Increment = .05,
+		Increment = .1,
 		ValueName = "Wait Time",
 		Callback = function(Value)
 			loadAgainTime = Value
