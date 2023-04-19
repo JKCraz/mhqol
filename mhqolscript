@@ -127,7 +127,7 @@
 
 			game:GetService("ReplicatedStorage").UpdateLimit:FireServer("OreLimit",0.11691542288557213) -- Sets Ore Limit To One
 
-			if obUpgraded = false then
+			if obUpgraded == false then
 				upgradeOres()
 			end
 
