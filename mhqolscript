@@ -161,18 +161,6 @@
 			wait(0.1)
 		end
 	end
-
-	function upgradeOres()
-		while wait() do
-			for i, ores in pairs(BaseOres:GetChildren()) do
-				ores.Anchored = true
-				wait(.25)
-				print(upgrader.CFrame)
-				upgraders.Vector3 = Vector3.new(ores.CFrame)
-				print(upgrader.Vector3)
-			end
-		end
-	end
 	
 	-- Webhooks
 
