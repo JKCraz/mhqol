@@ -467,43 +467,54 @@
 	function autoLayout()
 		if AutoLayout == true then
 			if loadOnTime == true then
-				game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",firstLayoutToLoad)
-				wait(waitsplittime)
-				game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",secondLayoutToLoad)
-				layoutLoaded = true
+				if #physicalBase:GetChildren() == 0 then
+					game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",firstLayoutToLoad)
+					wait(waitsplittime)
+					game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",secondLayoutToLoad)
+					layoutLoaded = true
+				  end
 			end
 			if loadOnChange == true then
-				game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",firstLayoutToLoad)
-				firstLoaded = true
+				if #physicalBase:GetChildren() == 0 then
+					game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",firstLayoutToLoad)
+					firstLoaded = true
+				end
 			end
 		end
 	end
 
-	game:GetService("Players").LocalPlayer.Rebirths:GetPropertyChangedSignal("Value"):Connect(function()
+	game:GetService("Players").LocalPlayer.Rebirths:GetPropertyChangedSignal("Value"):Connect(function() -- Gets Called When Player Reborns
+
+		if pulseWithReborn == true then -- Pulses
+			wait(loadAgainTime + 2)
+			game:GetService("ReplicatedStorage").Pulse:FireServer()
+		end
+
 		firstLoaded = false
-		if loadOnTime == true and loadOnChange == false then
-			layoutLoaded = false
-			if pulseWithReborn == true then
-				wait(3)
-				game:GetService("ReplicatedStorage").Pulse:FireServer()
-			end
-			if layoutLoaded == false then
-				wait(loadAgainTime)
-				pcall(autoLayout)
+		layoutLoaded = false
+
+		if loadOnTime == true and loadOnChange == false then -- Loads second layout after certain Time
 				if layoutLoaded == false then
-					pcall(autoLayout)
+					wait(loadAgainTime)
+					if #physicalBase:GetChildren() == 0 then
+							pcall(autoLayout)
+						if layoutLoaded == false then
+							pcall(autoLayout)
+					end
 				end
 			end
 		end
-		if loadOnChange == true and loadOnTime == false then
+		if loadOnChange == true and loadOnTime == false then -- Loads second layout when money changes for the first time
 			wait(loadAgainTime)
-			game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",firstLayoutToLoad)
-			firstLoaded = true
+			if #physicalBase:GetChildren() == 0 then
+				game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",firstLayoutToLoad)
+				firstLoaded = true
+			end
 		end
 	end)
 
-	game:GetService("Players").LocalPlayer.PlayerGui.GUI.HUDTop.MoneyOther.Money.Amount:GetPropertyChangedSignal("Text"):Connect(function()
-		if loadOnChange == true and and secondLoaded == false firstLoaded == true then
+	game:GetService("Players").LocalPlayer.PlayerGui.GUI.HUDTop.MoneyOther.Money.Amount:GetPropertyChangedSignal("Text"):Connect(function() -- Gets called everytime money is changed
+		if loadOnChange == true and secondLoaded == false and firstLoaded == true then
 			game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",secondLayoutToLoad)
 		end
 	end)
