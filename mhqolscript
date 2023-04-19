@@ -467,7 +467,7 @@
 	function autoLayout()
 		if AutoLayout == true then
 			if loadOnTime == true then
-				if #physicalBase:GetChildren() == 0 then
+				if not physicalBase:FindFirstChildWhichIsA("Model") then
 					game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",firstLayoutToLoad)
 					wait(waitsplittime)
 					game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",secondLayoutToLoad)
@@ -475,7 +475,7 @@
 				  end
 			end
 			if loadOnChange == true then
-				if #physicalBase:GetChildren() == 0 then
+				if not physicalBase:FindFirstChildWhichIsA("Model") then
 					game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",firstLayoutToLoad)
 					firstLoaded = true
 				end
@@ -496,7 +496,7 @@
 		if loadOnTime == true and loadOnChange == false then -- Loads second layout after certain Time
 				if layoutLoaded == false then
 					wait(loadAgainTime)
-					if #physicalBase:GetChildren() == 0 then
+					if not physicalBase:FindFirstChildWhichIsA("Model") then
 							pcall(autoLayout)
 						if layoutLoaded == false then
 							pcall(autoLayout)
@@ -506,7 +506,7 @@
 		end
 		if loadOnChange == true and loadOnTime == false then -- Loads second layout when money changes for the first time
 			wait(loadAgainTime)
-			if #physicalBase:GetChildren() == 0 then
+			if not physicalBase:FindFirstChildWhichIsA("Model") then
 				game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",firstLayoutToLoad)
 				firstLoaded = true
 			end
