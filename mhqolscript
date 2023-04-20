@@ -1,8 +1,8 @@
 
 	--[[ TO DO:
 
-	ore boost
-	ore value tracker
+	ore boost - probably not doing
+	ore value tracker - done ; havent tested
 	ore esp - maybe
 	add webhook username
 
@@ -47,6 +47,7 @@
 	local OreBoost = true
 	local loadOnTime = true
 	local loadOnChange = true
+	local OreTracker = true
 
 	-- Player
 
@@ -79,6 +80,9 @@
 	local EggIslandSpawns = game.Workspace.Easter['EASTER ISLAND EGG SPAWNS']:GetChildren()
 	local EggSpawns = game.Workspace.Map['EGG_SPAWNS']:GetChildren()
 
+	local MoneyLib = require(game.ReplicatedStorage.MoneyLib)
+	local Dropped = game.Workspace.DroppedParts[tostring(game.Players.LocalPlayer.PlayerTycoon.Value)]
+
 	-- Layouts
 
 	local firstLayoutToLoad = "Layout1"
@@ -109,8 +113,7 @@
 	local firstLoaded = false
 	local secondLoaded = false
 
-	-- Ore Boost
-
+	--[[ - Ore Boost
 	local resetters = {"Tesla Resetter", "Tesla Refuter", "Black Dwarf", "Void Star", "The Final Upgrader", "The Ultimate Sacrifice", "Daestrophe", "⭐ Paranormal Tesla Resetter ⭐", "⭐ Paranormal Tesla Refuter ⭐", "⭐ Stargazed Black Dwarf ⭐", "⭐ Stargazed Void Star ⭐"}
 
 	local obUpgraded = false
@@ -121,11 +124,7 @@
 	local obResetters = game.Workspace
 	local obFurnace = game.Workspace
 
-	--Functions
-
-	-- Oreboost
-
-	function oreBoost()
+		function oreBoost()
 
 		while OreBoost == true do
 
@@ -165,6 +164,19 @@
 			wait(0.1)
 		end
 	end
+	--]]
+
+
+
+	-- Module Scripts
+
+	local LayoutUtility = game:GetService("ReplicatedStorage").LayoutUtility
+
+	--Functions
+
+	-- Oreboost
+
+
 	
 	-- Webhooks
 
@@ -426,6 +438,13 @@
 		end
 	end
 
+	Dropped.ChildAdded:connect(function() -- Ore Tracker
+		if OreTracker == true then
+			for i, ores in pairs(BaseOres:GetChildren()) do
+				game:GetService("ReplicatedStorage").TrackerTypes.Premium:Clone().Parent = ore
+			end
+		end)
+
 	-- Remote Spam
 
 	function autoRemote()
@@ -494,14 +513,12 @@
 		layoutLoaded = false
 
 		if loadOnTime == true and loadOnChange == false then -- Loads second layout after certain Time
-				if layoutLoaded == false then
 					wait(loadAgainTime)
 					if not physicalBase:FindFirstChildWhichIsA("Model") then
 							pcall(autoLayout)
 						if layoutLoaded == false then
 							pcall(autoLayout)
 					end
-				end
 			end
 		end
 		if loadOnChange == true and loadOnTime == false then -- Loads second layout when money changes for the first time
@@ -872,6 +889,21 @@
 		end    
 	})
 
+	OreSection:AddButton({
+		Name = "Destroy All Ores",
+		Callback = function()
+				destroyOres()
+		end    
+	})
+
+	OreSection:AddToggle({
+		Name = "Toggle Ore Tracker",
+		Default = false,
+		Callback = function(Value)
+			OreTracker = Value
+		end
+	})
+
 	OreSection:AddToggle({
 		Name = "Freeze Ores",
 		Default = false,
@@ -885,13 +917,6 @@
 		Name = "TP Ores To Player",
 		Callback = function()
 				tpOres()
-		end    
-	})
-
-	OreSection:AddButton({
-		Name = "Destroy All Ores",
-		Callback = function()
-				destroyOres()
 		end    
 	})
 
@@ -1194,6 +1219,10 @@
 		Name = "Auto Buy"
 	})
 
+	local DaySection = MiscTab:AddSection({
+		Name = "Change Time"
+	})
+
 	local TransitionSection = MiscTab:AddSection({
 		Name = "Transition Screen"
 	})
@@ -1202,9 +1231,9 @@
 		Name = "Anti AFK"
 	})
 
-	local obSection = MiscTab:AddSection({
-		Name = "Ore Boost"
-	})
+	-- local obSection = MiscTab:AddSection({
+	--	Name = "Ore Boost"
+	--})
 
 	BoxSection:AddToggle({
 		Name = "Toggle Open Boxes",
@@ -1308,7 +1337,19 @@
 		end    
 	})
 
-	obSection:AddToggle({
+	DaySection:AddButton({
+		Name = "Change Time",
+		Callback = function()
+			if game:GetService("ReplicatedStorage").NightTime.Value == false then
+				game:GetService("ReplicatedStorage").NightTime.Value = true
+			else
+				game:GetService("ReplicatedStorage").NightTime.Value = false
+			end
+		end
+	})
+	
+	--[[
+			obSection:AddToggle({
 		Name = "Toggle Ore Boost",
 		Default = false,
 		Callback = function(Value)
@@ -1316,6 +1357,7 @@
 			oreBoost()
 		end    
 	})
+	--]]
 
 	TransitionSection:AddParagraph("Invisble Transition Screen","Always On")
 
