@@ -507,7 +507,7 @@
 					wait(.1)
 				until not (player:FindFirstChild("Rebirthing")) -- Code inside here gets ran after placement is enabled
 
-				wait(.1)
+				wait(.25)
 
 				print("jasifryx checked and placement is ENABLED AFTER BEING DISABLED")
 
