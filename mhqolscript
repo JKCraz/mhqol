@@ -1,7 +1,7 @@
 
 	--[[ TO DO:
 
-	ore boost - probably not doing
+	ore boost - probably not doing - if doing i will steal it :sigma:
 	ore value tracker - done ; havent tested
 	ore esp - maybe
 	add webhook username
@@ -44,10 +44,11 @@
 	local AutoBaz = true
 	local kickAtDecShiny = true
 	local pulseWithReborn = true
-	local OreBoost = true
+	-- local OreBoost = true
 	local loadOnTime = true
 	local loadOnChange = true
 	local OreTracker = true
+	local LoadLayoutOnce = true
 
 	-- Player
 
@@ -90,8 +91,6 @@
 	local rebirthAmount = game:GetService("Players").LocalPlayer.Rebirths
 	local rebirthAmountValue = game:GetService("Players").LocalPlayer.Rebirths.Value
 
-	local layoutLoaded = false
-
 	-- Delays
 
 	local waitsplittime = .75
@@ -110,8 +109,6 @@
 	local lifeToStop = "100000000000"
 	local conveyorSpeed = 1
 	local playersPrevLocation = "234283492389423004982340823890489"
-	local firstLoaded = false
-	local secondLoaded = false
 
 	--[[ - Ore Boost
 	local resetters = {"Tesla Resetter", "Tesla Refuter", "Black Dwarf", "Void Star", "The Final Upgrader", "The Ultimate Sacrifice", "Daestrophe", "⭐ Paranormal Tesla Resetter ⭐", "⭐ Paranormal Tesla Refuter ⭐", "⭐ Stargazed Black Dwarf ⭐", "⭐ Stargazed Void Star ⭐"}
@@ -443,7 +440,8 @@
 			for i, ores in pairs(BaseOres:GetChildren()) do
 				game:GetService("ReplicatedStorage").TrackerTypes.Premium:Clone().Parent = ore
 			end
-		end)
+		end
+	end)
 
 	-- Remote Spam
 
@@ -484,23 +482,46 @@
 	end
 
 	function autoLayout()
-		if AutoLayout == true then
-			if loadOnTime == true then
-				if not physicalBase:FindFirstChildWhichIsA("Model") then
-					game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",firstLayoutToLoad)
-					wait(waitsplittime)
-					game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",secondLayoutToLoad)
-					layoutLoaded = true
-				  end
+
+		--[[ loads layout but hard to inplement
+			if LoadLayoutOnce == true then
+				game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",firstLayoutToLoad) -- Loads first layout
+
+				wait(waitsplittime) -- Waits Split Time
+
+				game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",secondLayoutToLoad) -- Loads Second Layout
+
+				LoadLayoutOnce = false
 			end
-			if loadOnChange == true then
-				if not physicalBase:FindFirstChildWhichIsA("Model") then
-					game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",firstLayoutToLoad)
-					firstLoaded = true
-				end
+		--]]
+
+		while AutoLayout == true do
+
+			local rebirthingInPlayer = player:FindFirstChild("Rebirthing") -- Placement blocked because of reborning
+
+			if rebirthingInPlayer then -- Checks for Placement disabled
+
+				print("jasifryx checked and placement is DISABLED")
+
+				repeat 	-- Runs once when placement is enabled
+					wait(.1)
+				until not (player:FindFirstChild("Rebirthing")) -- Code inside here gets ran after placement is enabled
+
+				wait(.1)
+
+				print("jasifryx checked and placement is ENABLED AFTER BEING DISABLED")
+
+				game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",firstLayoutToLoad) -- Loads first layout
+
+				wait(waitsplittime) -- Waits Split Time
+
+				game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",secondLayoutToLoad) -- Loads Second Layout
+
 			end
+			wait(.1)
 		end
 	end
+
 
 	game:GetService("Players").LocalPlayer.Rebirths:GetPropertyChangedSignal("Value"):Connect(function() -- Gets Called When Player Reborns
 
@@ -508,32 +529,9 @@
 			wait(loadAgainTime + 2)
 			game:GetService("ReplicatedStorage").Pulse:FireServer()
 		end
+		
+		autoLayout()
 
-		firstLoaded = false
-		layoutLoaded = false
-
-		if loadOnTime == true and loadOnChange == false then -- Loads second layout after certain Time
-					wait(loadAgainTime)
-					if not physicalBase:FindFirstChildWhichIsA("Model") then
-							pcall(autoLayout)
-						if layoutLoaded == false then
-							pcall(autoLayout)
-					end
-			end
-		end
-		if loadOnChange == true and loadOnTime == false then -- Loads second layout when money changes for the first time
-			wait(loadAgainTime)
-			if not physicalBase:FindFirstChildWhichIsA("Model") then
-				game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",firstLayoutToLoad)
-				firstLoaded = true
-			end
-		end
-	end)
-
-	game:GetService("Players").LocalPlayer.PlayerGui.GUI.HUDTop.MoneyOther.Money.Amount:GetPropertyChangedSignal("Text"):Connect(function() -- Gets called everytime money is changed
-		if loadOnChange == true and secondLoaded == false and firstLoaded == true then
-			game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",secondLayoutToLoad)
-		end
 	end)
 
 	-- Base Tweaks
@@ -805,22 +803,6 @@
 		end    
 	})
 
-	AutoLayoutSection:AddToggle({
-		Name = "Toggle Split With Time",
-		Default = false,
-		Callback = function(Value)
-			loadOnTime = Value
-		end
-	})
-
-	AutoLayoutSection:AddToggle({
-		Name = "Toggle Split On Money Change",
-		Default = false,
-		Callback = function(Value)
-			loadOnChange = Value
-		end
-	})
-
 	AutoLayoutSection:AddSlider({
 		Name = "Split Wait Time",
 		Min = 0,
@@ -831,19 +813,6 @@
 		ValueName = "Split Time",
 		Callback = function(Value)
 			waitsplittime = Value
-		end    
-	})
-
-	AutoLayoutSection:AddSlider({
-		Name = "Load Again Wait Time",
-		Min = 0.30,
-		Max = 3,
-		Default = 0.30,
-		Color = Color3.fromRGB(255,255,255),
-		Increment = .1,
-		ValueName = "Wait Time",
-		Callback = function(Value)
-			loadAgainTime = Value
 		end    
 	})
 
