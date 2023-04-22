@@ -48,7 +48,7 @@
 	local loadOnTime = true
 	local loadOnChange = true
 	local OreTracker = true
-	local LoadLayoutOnce = true
+	local reloadMins = true
 
 	-- Player
 
@@ -113,6 +113,9 @@
 	local rebornURL = "fjsdjf"
 	local shinyURL = "fjsdjf"
 	local decimalURL = "fjsdjf"
+
+	local timeToReload = 300 -- 5 mins
+	local StartTime = os.time()
 
 	--[[ - Ore Boost
 	local resetters = {"Tesla Resetter", "Tesla Refuter", "Black Dwarf", "Void Star", "The Final Upgrader", "The Ultimate Sacrifice", "Daestrophe", "⭐ Paranormal Tesla Resetter ⭐", "⭐ Paranormal Tesla Refuter ⭐", "⭐ Stargazed Black Dwarf ⭐", "⭐ Stargazed Void Star ⭐"}
@@ -482,55 +485,23 @@
 	end
 
 	function autoLayout()
-
-		--[[ loads layout but hard to inplement
-			if LoadLayoutOnce == true then
-				game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",firstLayoutToLoad) -- Loads first layout
-
-				wait(waitsplittime) -- Waits Split Time
-
-				game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",secondLayoutToLoad) -- Loads Second Layout
-
-				LoadLayoutOnce = false
-			end
-		--]]
-
-		while AutoLayout == true do
-
-			local rebirthingInPlayer = player:FindFirstChild("Rebirthing") -- Placement blocked because of reborning
-			local bcp = player:FindFirstChild("BlockClientPlacement") -- Placement blocked because of loading
-
-			if rebirthingInPlayer or bcp then -- Checks for Placement disabled
-
-				print("jasifryx checked and placement is DISABLED")
-
-				repeat 	-- Runs once when placement is enabled
-					wait(.1)
-				until not (player:FindFirstChild("Rebirthing")) or not (player:FindFirstChild("BlockClientPlacement"))  -- Code inside here gets ran after placement is enabled
-
-				wait(.25)
-
-				print("jasifryx checked and placement is ENABLED AFTER BEING DISABLED")
-
-				game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",firstLayoutToLoad) -- Loads first layout
-
-				wait(waitsplittime) -- Waits Split Time
-
-				game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",secondLayoutToLoad) -- Loads Second Layout
-
-			end
-			wait(.1)
+		if AutoLayout == true then
+			game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",firstLayoutToLoad) -- Loads first layout
+			wait(waitsplittime) -- Waits Split Time
+			game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",secondLayoutToLoad) -- Loads Second Layout
 		end
 	end
 
 
 	game:GetService("Players").LocalPlayer.Rebirths:GetPropertyChangedSignal("Value"):Connect(function() -- Gets Called When Player Reborns
 
+		StartTime = os.time() -- Resets Timer To Reload
+
 		if pulseWithReborn == true then -- Pulses
 			wait(loadAgainTime + 2)
 			game:GetService("ReplicatedStorage").Pulse:FireServer()
 		end
-		
+
 		autoLayout()
 
 	end)
@@ -786,6 +757,22 @@
 		end    
 	})
 
+	AutoLayoutSection:AddToggle({
+		Name = "Load Again After 10 Minutes",
+		Default = false,
+		Callback = function(Value)
+			reloadMins = Value
+			while reloadMins == true do
+				if os.time() - StartTime >= timeToReload then
+					game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",firstLayoutToLoad) -- Loads first layout
+					wait(waitsplittime) -- Waits Split Time
+					game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",secondLayoutToLoad) -- Loads Second Layout
+				end
+				wait(1) -- Wait 1 second before checking again
+			end
+		end    
+	})
+
 	AutoLayoutSection:AddDropdown({
 		Name = "Select First Layout To Load",
 		Default = "Layout1",
@@ -805,13 +792,13 @@
 	})
 
 	AutoLayoutSection:AddSlider({
-		Name = "Split Wait Time",
+		Name = "Time In Between Layouts",
 		Min = 0,
 		Max = 30,
 		Default = .10,
 		Color = Color3.fromRGB(255,255,255),
 		Increment = .20,
-		ValueName = "Split Time",
+		ValueName = "Second Wait",
 		Callback = function(Value)
 			waitsplittime = Value
 		end    
@@ -904,6 +891,10 @@
 		Name = "Decimal Tracker"
 	})
 
+	local webhooknotice = WebhooksTab:AddSection({
+		Name = "Notice"
+	})
+
 	RebornTrackerSection:AddToggle({
 		Name = "Toggle Reborn Tracker",
 		Default = false,
@@ -914,7 +905,7 @@
 
 	RebornTrackerSection:AddTextbox({
 		Name = "Reborn URL",
-		Default = "Webhook URL",
+		Default = "https://discord.com/api/webhooks/1098761400513478699/6s_AVgbfYyMKbxkHSXRXkfVIo60K0n-oOa074xjViNDyk2H0-qOfhqdSJyJEuzowieMV",
 		TextDisappear = false,
 		Save = true,
     	Flag = "rebornURLsave",
@@ -933,7 +924,7 @@
 
 	ShinySection:AddTextbox({
 		Name = "Shiny URL",
-		Default = "Webhook URL",
+		Default = "https://discord.com/api/webhooks/1097521049601572924/o9hF7NZpiMTMIje_KUh9HmOYr9FYNq4zLfAIRz9Qo_Qa9ETyxxhHRZtcKlmLBy5ho3ar",
 		TextDisappear = false,
 		Save = true,
     	Flag = "shinyURLsave",
@@ -952,7 +943,7 @@
 
 	DecimalSection:AddTextbox({
 		Name = "Decimal URL",
-		Default = "Webhook URL",
+		Default = "https://discord.com/api/webhooks/1097521137413533837/_b3U0AxQLat16pXyB5VvUnm_cLU-mJDhcKKX7n-bi7oV904F9dzY3kOWgGREqAeqRbIS",
 		TextDisappear = false,
 		Save = true,
     	Flag = "decimalURLsave",
@@ -960,6 +951,8 @@
 			decimalURL = Value
 		end	  
 	})
+
+	webhooknotice:AddParagraph("Notice:","The default webhook URLS are mine. Click on the right side of the text and Ctrl+A")
 
 	-- Layouts
 
