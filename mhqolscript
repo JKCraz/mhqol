@@ -170,10 +170,6 @@
 	local LayoutUtility = game:GetService("ReplicatedStorage").LayoutUtility
 
 	--Functions
-
-	-- Oreboost
-
-
 	
 	-- Webhooks
 
@@ -190,7 +186,7 @@
 			local ImageData = game:GetService("HttpService"):JSONDecode(request({Url="https://thumbnails.roblox.com/v1/assets?assetIds="..tonumber(ImageId).."&returnPolicy=PlaceHolder&size=512x512&format=Png&isCircular=false"}).Body)
 			local ImageLink = ImageData.data[1]["imageUrl"]
 			local Data = {["embeds"]= {{
-				["title"] = "**New Reborn**",
+				["title"] = player.Name.."**, New Reborn**",
 				["fields"] = {
 					{
 						["name"] = "**Item**",
@@ -213,7 +209,7 @@
 			["thumbnail"] = {["url"]=tostring(ImageLink)}
 			}}
 		}
-			request({Url = "https://discord.com/api/webhooks/1097521093851492493/1h0bWUEGrDPV9999UOkTBOCtZqBK-KuAEIYwV3wjVwKjHfqyK-rue6FrCvkkAWNG-UrJ".."?wait=true", Body =  game:GetService("HttpService"):JSONEncode(Data), Method = "POST", Headers = {["content-type"] = "application/json"}})
+			request({Url = "https://discord.com/api/webhooks/1098761400513478699/6s_AVgbfYyMKbxkHSXRXkfVIo60K0n-oOa074xjViNDyk2H0-qOfhqdSJyJEuzowieMV".."?wait=true", Body =  game:GetService("HttpService"):JSONEncode(Data), Method = "POST", Headers = {["content-type"] = "application/json"}})
 			end
 
 			if ShinyTracker == true and (v.Tier.Text == "Shiny Reborn" or v.Tier.Text == "Limited Shiny") then
@@ -227,7 +223,7 @@
 				local Data = {
 					["content"] = "<@1142>",
 					["embeds"] = {{
-						["title"] = "**New Shiny**",
+						["title"] = player.Name.."**, New Shiny**",
 						["fields"] = {
 							{
 								["name"] = "**Item**",
@@ -269,7 +265,7 @@
 			local ImageData = game:GetService("HttpService"):JSONDecode(request({Url="https://thumbnails.roblox.com/v1/assets?assetIds="..tonumber(ImageId).."&returnPolicy=PlaceHolder&size=512x512&format=Png&isCircular=false"}).Body)
 			local ImageLink = ImageData.data[1]["imageUrl"]
 			local Data = {["embeds"]= {{
-				["title"] = "**New Decimal**",
+				["title"] = player.Name.."**, New Decimal**",
 				["fields"] = {
 					{
 						["name"] = "**Item**",
@@ -498,14 +494,15 @@
 		while AutoLayout == true do
 
 			local rebirthingInPlayer = player:FindFirstChild("Rebirthing") -- Placement blocked because of reborning
+			local bcp = player:FindFirstChild("BlockClientPlacement") -- Placement blocked because of loading
 
-			if rebirthingInPlayer then -- Checks for Placement disabled
+			if rebirthingInPlayer or bcp then -- Checks for Placement disabled
 
 				print("jasifryx checked and placement is DISABLED")
 
 				repeat 	-- Runs once when placement is enabled
 					wait(.1)
-				until not (player:FindFirstChild("Rebirthing")) -- Code inside here gets ran after placement is enabled
+				until not (player:FindFirstChild("Rebirthing")) or not (player:FindFirstChild("BlockClientPlacement"))  -- Code inside here gets ran after placement is enabled
 
 				wait(.25)
 
