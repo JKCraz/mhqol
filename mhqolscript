@@ -4,7 +4,7 @@
 	ore boost - probably not doing - if doing i will steal it :sigma:
 	ore value tracker - done ; havent tested
 	ore esp - maybe
-	add webhook username
+	rework auto load again
 
 	--]]
 
@@ -110,6 +110,10 @@
 	local conveyorSpeed = 1
 	local playersPrevLocation = "234283492389423004982340823890489"
 
+	local rebornURL = "fjsdjf"
+	local shinyURL = "fjsdjf"
+	local decimalURL = "fjsdjf"
+
 	--[[ - Ore Boost
 	local resetters = {"Tesla Resetter", "Tesla Refuter", "Black Dwarf", "Void Star", "The Final Upgrader", "The Ultimate Sacrifice", "Daestrophe", "⭐ Paranormal Tesla Resetter ⭐", "⭐ Paranormal Tesla Refuter ⭐", "⭐ Stargazed Black Dwarf ⭐", "⭐ Stargazed Void Star ⭐"}
 
@@ -186,7 +190,7 @@
 			local ImageData = game:GetService("HttpService"):JSONDecode(request({Url="https://thumbnails.roblox.com/v1/assets?assetIds="..tonumber(ImageId).."&returnPolicy=PlaceHolder&size=512x512&format=Png&isCircular=false"}).Body)
 			local ImageLink = ImageData.data[1]["imageUrl"]
 			local Data = {["embeds"]= {{
-				["title"] = player.Name.."**, New Reborn**",
+				["title"] = player.Name.."** New Reborn**",
 				["fields"] = {
 					{
 						["name"] = "**Item**",
@@ -209,7 +213,7 @@
 			["thumbnail"] = {["url"]=tostring(ImageLink)}
 			}}
 		}
-			request({Url = "https://discord.com/api/webhooks/1098761400513478699/6s_AVgbfYyMKbxkHSXRXkfVIo60K0n-oOa074xjViNDyk2H0-qOfhqdSJyJEuzowieMV".."?wait=true", Body =  game:GetService("HttpService"):JSONEncode(Data), Method = "POST", Headers = {["content-type"] = "application/json"}})
+			request({Url = rebornURL.."?wait=true", Body =  game:GetService("HttpService"):JSONEncode(Data), Method = "POST", Headers = {["content-type"] = "application/json"}})
 			end
 
 			if ShinyTracker == true and (v.Tier.Text == "Shiny Reborn" or v.Tier.Text == "Limited Shiny") then
@@ -223,7 +227,7 @@
 				local Data = {
 					["content"] = "<@1142>",
 					["embeds"] = {{
-						["title"] = player.Name.."**, New Shiny**",
+						["title"] = player.Name.."** New Shiny**",
 						["fields"] = {
 							{
 								["name"] = "**Item**",
@@ -247,7 +251,7 @@
 					}}
 				}
 				request({
-					Url = "https://discord.com/api/webhooks/1097521049601572924/o9hF7NZpiMTMIje_KUh9HmOYr9FYNq4zLfAIRz9Qo_Qa9ETyxxhHRZtcKlmLBy5ho3ar".."?wait=true",
+					Url = shinyURL.."?wait=true",
 					Body =  game:GetService("HttpService"):JSONEncode(Data),
 					Method = "POST",
 					Headers = {
@@ -265,7 +269,7 @@
 			local ImageData = game:GetService("HttpService"):JSONDecode(request({Url="https://thumbnails.roblox.com/v1/assets?assetIds="..tonumber(ImageId).."&returnPolicy=PlaceHolder&size=512x512&format=Png&isCircular=false"}).Body)
 			local ImageLink = ImageData.data[1]["imageUrl"]
 			local Data = {["embeds"]= {{
-				["title"] = player.Name.."**, New Decimal**",
+				["title"] = player.Name.."** New Decimal**",
 				["fields"] = {
 					{
 						["name"] = "**Item**",
@@ -288,7 +292,7 @@
 			["thumbnail"] = {["url"]=tostring(ImageLink)}
 			}}
 		}
-			request({Url = "https://discord.com/api/webhooks/1097521137413533837/_b3U0AxQLat16pXyB5VvUnm_cLU-mJDhcKKX7n-bi7oV904F9dzY3kOWgGREqAeqRbIS".."?wait=true", Body =  game:GetService("HttpService"):JSONEncode(Data), Method = "POST", Headers = {["content-type"] = "application/json"}})
+			request({Url = decimalURL.."?wait=true", Body =  game:GetService("HttpService"):JSONEncode(Data), Method = "POST", Headers = {["content-type"] = "application/json"}})
 			end
 
 		end
@@ -908,6 +912,17 @@
 		end    
 	})
 
+	RebornTrackerSection:AddTextbox({
+		Name = "Reborn URL",
+		Default = "Webhook URL",
+		TextDisappear = false,
+		Save = true,
+    	Flag = "rebornURLsave"
+		Callback = function(Value)
+			rebornURL = Value
+		end	  
+	})
+
 	ShinySection:AddToggle({
 		Name = "Toggle Shiny Tracker",
 		Default = false,
@@ -916,12 +931,34 @@
 		end    
 	})
 
+	ShinySection:AddTextbox({
+		Name = "Shiny URL",
+		Default = "Webhook URL",
+		TextDisappear = false,
+		Save = true,
+    	Flag = "shinyURLsave"
+		Callback = function(Value)
+			shinyURL = Value
+		end	  
+	})
+
 	DecimalSection:AddToggle({
 		Name = "Toggle Decimal Tracker",
 		Default = false,
 		Callback = function(Value)
 				DecimalTracker = Value
 		end    
+	})
+
+	DecimalSection:AddTextbox({
+		Name = "Decimal URL",
+		Default = "Webhook URL",
+		TextDisappear = false,
+		Save = true,
+    	Flag = "decimalURLsave"
+		Callback = function(Value)
+			decimalURL = Value
+		end	  
 	})
 
 	-- Layouts
