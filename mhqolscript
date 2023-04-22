@@ -917,7 +917,7 @@
 		Default = "Webhook URL",
 		TextDisappear = false,
 		Save = true,
-    	Flag = "rebornURLsave"
+    	Flag = "rebornURLsave",
 		Callback = function(Value)
 			rebornURL = Value
 		end	  
@@ -936,7 +936,7 @@
 		Default = "Webhook URL",
 		TextDisappear = false,
 		Save = true,
-    	Flag = "shinyURLsave"
+    	Flag = "shinyURLsave",
 		Callback = function(Value)
 			shinyURL = Value
 		end	  
@@ -955,7 +955,7 @@
 		Default = "Webhook URL",
 		TextDisappear = false,
 		Save = true,
-    	Flag = "decimalURLsave"
+    	Flag = "decimalURLsave",
 		Callback = function(Value)
 			decimalURL = Value
 		end	  
