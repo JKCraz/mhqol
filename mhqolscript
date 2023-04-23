@@ -124,6 +124,8 @@
 	local shinyURL = "fjsdjf"
 	local decimalURL = "fjsdjf"
 
+	local initialTime = 300 -- time in seconds before loads again
+
 	--[[ - Ore Boost
 	local resetters = {"Tesla Resetter", "Tesla Refuter", "Black Dwarf", "Void Star", "The Final Upgrader", "The Ultimate Sacrifice", "Daestrophe", "⭐ Paranormal Tesla Resetter ⭐", "⭐ Paranormal Tesla Refuter ⭐", "⭐ Stargazed Black Dwarf ⭐", "⭐ Stargazed Void Star ⭐"}
 
@@ -235,7 +237,7 @@
 				local ImageData = game:GetService("HttpService"):JSONDecode(request({Url="https://thumbnails.roblox.com/v1/assets?assetIds="..tonumber(ImageId).."&returnPolicy=PlaceHolder&size=512x512&format=Png&isCircular=false"}).Body)
 				local ImageLink = ImageData.data[1]["imageUrl"]
 				local Data = {
-					["content"] = "<@1142>",
+					["content"] = "<@333696463596945410>",
 					["embeds"] = {{
 						["title"] = player.Name.."** New Shiny**",
 						["fields"] = {
@@ -493,6 +495,7 @@
 
 	function autoLayout()
 		if AutoLayout == true then
+			wait(.1)
 			game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",firstLayoutToLoad) -- Loads first layout
 			wait(waitsplittime) -- Waits Split Time
 			game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",secondLayoutToLoad) -- Loads Second Layout
@@ -502,7 +505,7 @@
 
 	game:GetService("Players").LocalPlayer.Rebirths:GetPropertyChangedSignal("Value"):Connect(function() -- Gets Called When Player Reborns
 
-		StartTime = os.time() -- Resets Timer To Reload
+		startTimer(initialTime) -- Resets Timer
 
 		if pulseWithReborn == true then -- Pulses
 			wait(loadAgainTime + 2)
@@ -512,6 +515,21 @@
 		autoLayout()
 
 	end)
+
+	local function startTimer(time) -- Reloads setup after time
+		if reloadMins == true then
+			local startTime = os.time()
+			local endTime = startTime + time
+			repeat
+			  local remainingTime = endTime - os.time()
+			  print("Time remaining: " .. remainingTime)
+			until os.time() >= endTime
+			print("Time's up!")
+			game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",firstLayoutToLoad) -- Loads first layout
+			wait(waitsplittime) -- Waits Split Time
+			game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",secondLayoutToLoad) -- Loads Second Layout
+		end
+	  end
 
 	-- Base Tweaks
 
@@ -792,18 +810,11 @@
 	})
 
 	LayoutSafteySection:AddToggle({
-		Name = "Load Again After 10 Minutes",
+		Name = "Toggle Load Again After 5 Minutes",
 		Default = false,
 		Callback = function(Value)
 			reloadMins = Value
-			while reloadMins == true do
-				if os.time() - StartTime >= timeToReload then
-					game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",firstLayoutToLoad) -- Loads first layout
-					wait(waitsplittime) -- Waits Split Time
-					game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",secondLayoutToLoad) -- Loads Second Layout
-				end
-				wait(1) -- Wait 1 second before checking again
-			end
+			startTimer(time)
 		end    
 	})
 	
