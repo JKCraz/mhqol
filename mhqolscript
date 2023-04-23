@@ -511,36 +511,7 @@
 
 		autoLayout()
 
-		DoubleCheck()
-
-		wait(20) -- Waits 10 Seconds After Reborning
-
-		if FirstLoaded == false then -- FirstLoaded Variables Depends On Items Found On Base
-			game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",firstLayoutToLoad)
-		end
-
-		if SecondLoaded == false then -- Same with FirstLoaded
-			game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",secondLayoutToLoad)
-		end
-
 	end)
-
-	function DoubleCheck() -- Decides "FirstLoaded" & "SecondLoaded"
-		if doubleCheckLayouts == true then
-			wait(3)
-			for i, v in pairs(physicalBase:GetChildren()) do
-				if v.Name == firstLayoutItem then
-					FirstLoaded = true
-					print("First Loaded: "..FirstLoaded.Value)
-				end
-				wait(waitsplittime + 3)
-				if v.Name == secondLayoutItem then
-					SecondLoaded = true
-					print("Second Loaded: "..SecondLoaded.Value)
-				end
-			end
-		end
-	end
 
 	-- Base Tweaks
 
