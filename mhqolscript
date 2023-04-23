@@ -49,6 +49,7 @@
 	local loadOnChange = true
 	local OreTracker = true
 	local reloadMins = true
+	local doubleCheckLayouts = true
 
 	-- Player
 
@@ -91,6 +92,15 @@
 	local rebirthAmount = game:GetService("Players").LocalPlayer.Rebirths
 	local rebirthAmountValue = game:GetService("Players").LocalPlayer.Rebirths.Value
 
+	local firstLayoutItem = "fsdf"
+	local secondLayoutItem = "fsdf"
+
+	local FirstLoaded = false
+	local SecondLoaded = false
+
+	local timeToReload = 300 -- 5 mins
+	local StartTime = os.time()
+
 	-- Delays
 
 	local waitsplittime = .75
@@ -113,9 +123,6 @@
 	local rebornURL = "fjsdjf"
 	local shinyURL = "fjsdjf"
 	local decimalURL = "fjsdjf"
-
-	local timeToReload = 300 -- 5 mins
-	local StartTime = os.time()
 
 	--[[ - Ore Boost
 	local resetters = {"Tesla Resetter", "Tesla Refuter", "Black Dwarf", "Void Star", "The Final Upgrader", "The Ultimate Sacrifice", "Daestrophe", "⭐ Paranormal Tesla Resetter ⭐", "⭐ Paranormal Tesla Refuter ⭐", "⭐ Stargazed Black Dwarf ⭐", "⭐ Stargazed Void Star ⭐"}
@@ -504,17 +511,39 @@
 
 		autoLayout()
 
+		DoubleCheck()
+
+		wait(20) -- Waits 10 Seconds After Reborning
+
+		if FirstLoaded == false then -- FirstLoaded Variables Depends On Items Found On Base
+			game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",firstLayoutToLoad)
+		end
+
+		if SecondLoaded == false then -- Same with FirstLoaded
+			game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",secondLayoutToLoad)
+		end
+
 	end)
 
-	-- Base Tweaks
-
-	function convSpeed()
-		while ConvSpeed == true do
-			local adjustSpeedValue = playersBase:FindFirstChild("AdjustSpeed")
-			adjustSpeedValue.Value = conveyorSpeed
-			wait(0.000001)
-		end    
+	function DoubleCheck() -- Decides "FirstLoaded" & "SecondLoaded"
+		print("reborned and checking for layouts")
+		if doubleCheckLayouts == true then
+			wait(3)
+			for i, v in pairs(physicalBase:GetChildren()) do
+				if v.Name == firstLayoutItem then
+					FirstLoaded = true
+					print("First Loaded: "..FirstLoaded.Value)
+				end
+				wait(waitsplittime + 3)
+				if v.Name == secondLayoutItem then
+					SecondLoaded = true
+					print("Second Loaded: "..SecondLoaded.Value)
+				end
+			end
+		end
 	end
+
+	-- Base Tweaks
 
 	function openCraftsman()
 		local gui = game.Players.LocalPlayer.PlayerGui:WaitForChild("GUI")
@@ -757,22 +786,6 @@
 		end    
 	})
 
-	AutoLayoutSection:AddToggle({
-		Name = "Load Again After 10 Minutes",
-		Default = false,
-		Callback = function(Value)
-			reloadMins = Value
-			while reloadMins == true do
-				if os.time() - StartTime >= timeToReload then
-					game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",firstLayoutToLoad) -- Loads first layout
-					wait(waitsplittime) -- Waits Split Time
-					game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",secondLayoutToLoad) -- Loads Second Layout
-				end
-				wait(1) -- Wait 1 second before checking again
-			end
-		end    
-	})
-
 	AutoLayoutSection:AddDropdown({
 		Name = "Select First Layout To Load",
 		Default = "Layout1",
@@ -804,6 +817,60 @@
 		end    
 	})
 
+	local LayoutSafteySection = AutoRebornTab:AddSection({
+		Name = "Layout Saftey"
+	})
+
+	LayoutSafteySection:AddToggle({
+		Name = "Load Again After 10 Minutes",
+		Default = false,
+		Callback = function(Value)
+			reloadMins = Value
+			while reloadMins == true do
+				if os.time() - StartTime >= timeToReload then
+					game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",firstLayoutToLoad) -- Loads first layout
+					wait(waitsplittime) -- Waits Split Time
+					game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",secondLayoutToLoad) -- Loads Second Layout
+				end
+				wait(1) -- Wait 1 second before checking again
+			end
+		end    
+	})
+
+	LayoutSafteySection:AddParagraph("Tutorial:","In the text boxes, type an item that ISN'T in both layouts but is in their own layout")
+
+	LayoutSafteySection:AddToggle({
+		Name = "Toggle Double Check Loaded Layouts",
+		Default = false,
+		Callback = function(Value)
+			doubleCheckLayouts = Value
+			DoubleCheck()
+		end    
+	})
+
+	LayoutSafteySection:AddTextbox({
+		Name = "First Layout Item",
+		Default = "Case Sensitive",
+		TextDisappear = false,
+		Save = true,
+    	Flag = "firstLayoutItem",
+		Callback = function(Value)
+			firstLayoutItem = Value
+		end	  
+	})
+
+	LayoutSafteySection:AddTextbox({
+		Name = "Second Layout Item",
+		Default = "Case Sensitive",
+		TextDisappear = false,
+		Save = true,
+    	Flag = "secondLayoutItem",
+		Callback = function(Value)
+			secondLayoutItem = Value
+		end	  
+	})
+	
+
 	-- Base Tweaks
 
 	local ConveyorSection = BaseTweaksTab:AddSection({
@@ -812,16 +879,6 @@
 
 	local OreSection = BaseTweaksTab:AddSection({
 		Name = "Ore Tweaks"
-	})
-
-	ConveyorSection:AddToggle({
-		Name = "Toggle Conveyor Speed",
-		Default = false,
-		Callback = function(Value)
-			ConvSpeed = Value
-			print(conveyorSpeed)
-			convSpeed()
-		end    
 	})
 
 	ConveyorSection:AddSlider({
@@ -834,6 +891,7 @@
 		ValueName = "Speed Multiplier",
 		Callback = function(Value)
 			conveyorSpeed = Value
+			playersBase:FindFirstChild("AdjustSpeed").Value = conveyorSpeed
 		end    
 	})
 
@@ -954,7 +1012,7 @@
 
 	webhooknotice:AddParagraph("Notice:","The default webhook URLS are mine. Click on the right side of the text and Ctrl+A")
 
-	-- Layouts
+	-- Layout Stealer
 
 	local LayoutSection = LayoutsTab:AddSection({
 		Name = "Layout Stealer"
