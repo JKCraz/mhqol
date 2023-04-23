@@ -124,7 +124,7 @@
 	local shinyURL = "fjsdjf"
 	local decimalURL = "fjsdjf"
 
-	local initialTime = 300 -- time in seconds before loads again
+	local Timer = 300 -- time in seconds before loads again (5 mins)
 
 	--[[ - Ore Boost
 	local resetters = {"Tesla Resetter", "Tesla Refuter", "Black Dwarf", "Void Star", "The Final Upgrader", "The Ultimate Sacrifice", "Daestrophe", "⭐ Paranormal Tesla Resetter ⭐", "⭐ Paranormal Tesla Refuter ⭐", "⭐ Stargazed Black Dwarf ⭐", "⭐ Stargazed Void Star ⭐"}
@@ -505,7 +505,7 @@
 
 	game:GetService("Players").LocalPlayer.Rebirths:GetPropertyChangedSignal("Value"):Connect(function() -- Gets Called When Player Reborns
 
-		startTimer(initialTime) -- Resets Timer
+		Timer = 300 -- Resets Timer
 
 		if pulseWithReborn == true then -- Pulses
 			wait(loadAgainTime + 2)
@@ -516,20 +516,22 @@
 
 	end)
 
-	local function startTimer(time) -- Reloads setup after time
+	function startTimer()
 		if reloadMins == true then
-			local startTime = os.time()
-			local endTime = startTime + time
-			repeat
-			  local remainingTime = endTime - os.time()
-			  print("Time remaining: " .. remainingTime)
-			until os.time() >= endTime
-			print("Time's up!")
-			game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",firstLayoutToLoad) -- Loads first layout
-			wait(waitsplittime) -- Waits Split Time
-			game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",secondLayoutToLoad) -- Loads Second Layout
+
+			while Timer > 0 do -- Takes Time Away From Timer
+				wait(1)
+				Timer = Timer - 1
+			end		
+
+			if Timer == 0 then -- Loads Layout
+				game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",firstLayoutToLoad) -- Loads first layout
+				wait(waitsplittime) -- Waits Split Time
+				game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",secondLayoutToLoad) -- Loads Second Layout
+			end
+
 		end
-	  end
+	end
 
 	-- Base Tweaks
 
@@ -814,7 +816,7 @@
 		Default = false,
 		Callback = function(Value)
 			reloadMins = Value
-			startTimer(time)
+			startTimer()
 		end    
 	})
 	
