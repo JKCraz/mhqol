@@ -119,12 +119,15 @@
 	local lifeToStop = "100000000000"
 	local conveyorSpeed = 1
 	local playersPrevLocation = "234283492389423004982340823890489"
+	local = "Soupytopian Refiner"
 
 	local rebornURL = "fjsdjf"
 	local shinyURL = "fjsdjf"
 	local decimalURL = "fjsdjf"
 
 	local Timer = 300 -- time in seconds before loads again (5 mins)
+
+	local rebornTime = 0
 
 	--[[ - Ore Boost
 	local resetters = {"Tesla Resetter", "Tesla Refuter", "Black Dwarf", "Void Star", "The Final Upgrader", "The Ultimate Sacrifice", "Daestrophe", "⭐ Paranormal Tesla Resetter ⭐", "⭐ Paranormal Tesla Refuter ⭐", "⭐ Stargazed Black Dwarf ⭐", "⭐ Stargazed Void Star ⭐"}
@@ -202,7 +205,7 @@
 			local ImageData = game:GetService("HttpService"):JSONDecode(request({Url="https://thumbnails.roblox.com/v1/assets?assetIds="..tonumber(ImageId).."&returnPolicy=PlaceHolder&size=512x512&format=Png&isCircular=false"}).Body)
 			local ImageLink = ImageData.data[1]["imageUrl"]
 			local Data = {["embeds"]= {{
-				["title"] = player.Name.."** New Reborn**",
+				["title"] = player.Name.."** New Reborn** ("..rebornTime.."s)",
 				["fields"] = {
 					{
 						["name"] = "**Item**",
@@ -239,7 +242,7 @@
 				local Data = {
 					["content"] = "<@333696463596945410>",
 					["embeds"] = {{
-						["title"] = player.Name.."** New Shiny**",
+						["title"] = player.Name.."** New Shiny** ("..rebornTime.."s)",
 						["fields"] = {
 							{
 								["name"] = "**Item**",
@@ -281,7 +284,7 @@
 			local ImageData = game:GetService("HttpService"):JSONDecode(request({Url="https://thumbnails.roblox.com/v1/assets?assetIds="..tonumber(ImageId).."&returnPolicy=PlaceHolder&size=512x512&format=Png&isCircular=false"}).Body)
 			local ImageLink = ImageData.data[1]["imageUrl"]
 			local Data = {["embeds"]= {{
-				["title"] = player.Name.."** New Decimal**",
+				["title"] = player.Name.."** New Decimal** ("..rebornTime.."s)",
 				["fields"] = {
 					{
 						["name"] = "**Item**",
@@ -317,6 +320,16 @@
 			end
 		end
 	end)
+
+	game:GetService("Players").LocalPlayer.PlayerGui.GUI.Notifications.ChildAdded:Connect(function(v)
+		if v.Name == "ItemTemplate" or "ItemTemplateMini" and v:FindFirstChild("Title") and v:FindFirstChild("Tier") and v:FindFirstChild("Icon") then
+			if v.Title.Text == Slipstream
+			print("Got: "..Slipstream)
+			AutoReborn = false
+			Slipstream = "N/A"
+		end
+	end
+end)
 
 	-- Layout Stealer
 
@@ -506,6 +519,7 @@
 	game:GetService("Players").LocalPlayer.Rebirths:GetPropertyChangedSignal("Value"):Connect(function() -- Gets Called When Player Reborns
 
 		Timer = 300 -- Resets Timer
+		rebornTime = 0 -- Resets Reborn Time
 
 		if pulseWithReborn == true then -- Pulses
 			wait(loadAgainTime + 2)
@@ -513,8 +527,15 @@
 		end
 
 		autoLayout()
+		rebornTimeFunc()
 
 	end)
+
+	function rebornTimeFunc()
+		while wait(1) do
+			rebornTime = rebornTime + 1
+		end
+	end
 
 	function startTimer()
 		if reloadMins == true then
@@ -522,12 +543,14 @@
 			while Timer > 0 do -- Takes Time Away From Timer
 				wait(1)
 				Timer = Timer - 1
+				print(Timer)
 			end		
 
-			if Timer == 0 then -- Loads Layout
+			while Timer <= 0 do -- Loads Layout
 				game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",firstLayoutToLoad) -- Loads first layout
 				wait(waitsplittime) -- Waits Split Time
 				game:GetService("ReplicatedStorage").Layouts:InvokeServer("Load",secondLayoutToLoad) -- Loads Second Layout
+				break 
 			end
 
 		end
@@ -761,6 +784,15 @@
 		Callback = function(Value)
 			kickAtDecShiny = Value
 		end
+	})
+
+	AutoRebornSection:AddDropdown({
+		Name = "Select Slipstream That You Need",
+		Default = "N/A",
+		Options = {"The Great Parasite", "Pulsar Octagnium Mine", "Incendium Mine", "Utopian Refiner", "Dystopian Refiner", "Burst Refiner", "Ore Supernova", "The Grand Prism", "Oblivion Weaver", "Neutropian Refiner", "Suitopian Refiner", "Orbital Cataclysm", "Behemoth Blossom"},
+		Callback = function(Value)
+				Slipstream = Value
+		end    
 	})
 
 	local AutoLayoutSection = AutoRebornTab:AddSection({
