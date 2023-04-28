@@ -119,7 +119,7 @@
 	local lifeToStop = "100000000000"
 	local conveyorSpeed = 1
 	local playersPrevLocation = "234283492389423004982340823890489"
-	local = "Soupytopian Refiner"
+	local Slipstream "Soupytopian Refiner"
 
 	local rebornURL = "fjsdjf"
 	local shinyURL = "fjsdjf"
