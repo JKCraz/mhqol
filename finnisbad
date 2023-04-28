@@ -1,0 +1,31 @@
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+local Window = OrionLib:MakeWindow({Name = "Finn is ass", HidePremium = false, IntroText = "Loading", SaveConfig = false, ConfigFolder = "MHQOL"})
+	
+
+	local Tab = Window:MakeTab({
+		Name = "ez clapz",
+		Icon = "rbxassetid://4483345998",
+		PremiumOnly = false
+	})
+
+	local Section = Tab:AddSection({
+		Name = "ur ass cheekz"
+	})
+
+
+
+	Section:AddButton({
+		Name = "Help, I am going to die button",
+		Callback = function()
+			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(126.558388, 95.0787582, 11.3433132, -0.0773490071, -8.79441941e-08, 0.997004092, -4.7182148e-08, 1, 8.45479988e-08, -0.997004092, -4.05010887e-08, -0.0773490071)
+		end    
+	})
+
+	Section:AddButton({
+		Name = "Go back button",
+		Callback = function()
+			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-138.487625, 31.998024, 11.0099936, 0, 0, -1, 0, 1, 0, 1, 0, 0)
+		end    
+	})
+
+OrionLib:Init()
