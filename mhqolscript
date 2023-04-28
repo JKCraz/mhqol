@@ -916,6 +916,13 @@ end)
 		end    
 	})
 
+	OreSection:AddButton({
+		Name = "Ore Limit To 10",
+		Callback = function()
+			game:GetService("ReplicatedStorage").UpdateLimit:FireServer("OreLimit",0.04228855721393035)
+		end    
+	})
+
 	-- Webhook
 
 	local RebornTrackerSection = WebhooksTab:AddSection({
