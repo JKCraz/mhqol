@@ -119,7 +119,7 @@
 	local lifeToStop = "100000000000"
 	local conveyorSpeed = 1
 	local playersPrevLocation = "234283492389423004982340823890489"
-	local Slipstream "Soupytopian Refiner"
+	local Slipstream = "Soupytopian Refiner"
 
 	local rebornURL = "fjsdjf"
 	local shinyURL = "fjsdjf"
@@ -323,7 +323,7 @@
 
 	game:GetService("Players").LocalPlayer.PlayerGui.GUI.Notifications.ChildAdded:Connect(function(v)
 		if v.Name == "ItemTemplate" or "ItemTemplateMini" and v:FindFirstChild("Title") and v:FindFirstChild("Tier") and v:FindFirstChild("Icon") then
-			if v.Title.Text == Slipstream
+			if v.Title.Text == Slipstream then
 			print("Got: "..Slipstream)
 			AutoReborn = false
 			Slipstream = "N/A"
